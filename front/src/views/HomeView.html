@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Hanken+Grotesk:wght@300..900&amp;family=JetBrains+Mono:wght@400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #000000;
+            color: #d8e4f2;
+            overflow-x: hidden;
+        }
+        .dot-pattern {
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0GSicoAwUd77F_ZN2kXDi6Yu_canQupZ69KWlfo8-6J8jgJhJdAORv5OeIFPfykG9cC9TuHaChmsTuh4vjTYdlbzfQ-G5GHbekz1TaljZLzgMaXPa0JoxeuidSxKNH0Uz0RrWtPQTWqSTTZavMoTOpvFfCGefBdI0zHJCeYvnWi3QsL-mfwjpWg-V7i6CWkaLfOUSJfP9psl50BN845-pYHkllDM5s5DmBrv2_HO9zcdiwBTjnkTC968YtQRVwQwccxhDOJKbSYst');
+            background-repeat: repeat;
+            background-size: 32px 32px;
+            opacity: 0.15;
+        }
+        .chamfer-clip {
+            clip-path: polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px);
+        }
+        .chamfer-clip-sm {
+            clip-path: polygon(4px 0%, 100% 0%, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0% 100%, 0% 4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#b7eaff",
+                        "secondary-fixed-dim": "#ffba20",
+                        "surface-container": "#15212b",
+                        "on-background": "#d8e4f2",
+                        "background": "#000000",
+                        "surface-container-lowest": "#040f19",
+                        "on-secondary": "#412d00",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#d8e4f2",
+                        "on-primary-fixed": "#001f28",
+                        "on-tertiary": "#2e3037",
+                        "tertiary-fixed-dim": "#c4c6cf",
+                        "surface-container-highest": "#2a3641",
+                        "on-error": "#690005",
+                        "secondary": "#ffdb9d",
+                        "inverse-primary": "#00677f",
+                        "tertiary": "#dadce5",
+                        "tertiary-container": "#bec0c9",
+                        "surface-container-high": "#202b36",
+                        "secondary-fixed": "#ffdea8",
+                        "tertiary-fixed": "#e1e2eb",
+                        "surface-bright": "#2f3a45",
+                        "on-tertiary-fixed-variant": "#44474e",
+                        "on-secondary-fixed-variant": "#5e4200",
+                        "on-surface-variant": "#bbc9cf",
+                        "surface": "#000000",
+                        "secondary-container": "#feb700",
+                        "primary": "#a4e6ff",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#00566a",
+                        "on-surface": "#d8e4f2",
+                        "on-primary-fixed-variant": "#004e60",
+                        "surface-dim": "#08141e",
+                        "primary-fixed-dim": "#4cd6ff",
+                        "on-tertiary-fixed": "#191c22",
+                        "on-primary": "#003543",
+                        "inverse-on-surface": "#26323c",
+                        "surface-container-low": "#111d27",
+                        "outline": "#859399",
+                        "surface-tint": "#4cd6ff",
+                        "primary-container": "#00d1ff",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#4c4e56",
+                        "surface-variant": "#2a3641",
+                        "on-secondary-container": "#6b4b00",
+                        "outline-variant": "#3c494e",
+                        "on-secondary-fixed": "#271900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "margin-lg": "64px",
+                        "gutter": "24px",
+                        "margin-md": "32px",
+                        "margin-xs": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "code-sm": ["JetBrains Mono"],
+                        "display-lg": ["Space Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "code-sm": ["13px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "0.04em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex flex-col items-center relative selection:bg-primary-container selection:text-on-primary-container"><div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-background" id="interactive-bg-container"><canvas class="w-full h-full" id="dot-matrix-canvas"></canvas></div>
+<!-- Background Elements -->
+<div class="fixed inset-0 pointer-events-none z-0">
+</div>
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-lg py-margin-xs fixed top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-white/5">
+<div class="font-display-lg text-headline-md tracking-tighter text-primary">CS RULE ENGINE</div>
+<div class="hidden md:flex gap-gutter items-center">
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer font-label-caps text-label-caps">DASHBOARD</span>
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer font-label-caps text-label-caps">RULE SETS</span>
+<span class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer font-label-caps text-label-caps">MATCH HISTORY</span>
+</div>
+<div class="flex gap-4">
+<button class="material-symbols-outlined text-outline hover:text-primary transition-colors p-2">settings</button>
+<button class="material-symbols-outlined text-outline hover:text-primary transition-colors p-2">account_circle</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center justify-center relative z-10 w-full px-gutter text-center">
+<!-- Hero Section -->
+<div class="mb-16">
+<h1 class="font-display-lg text-[64px] md:text-[96px] tracking-tightest leading-none text-on-surface mb-8">
+            CS RULE ENGINE
+        </h1>
+<!-- Feature Tags -->
+<div class="flex flex-wrap justify-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant/20 chamfer-clip-sm bg-white/5">
+<span class="material-symbols-outlined text-primary text-lg">casino</span>
+<span class="font-label-caps text-[10px] text-on-surface/70">随机规则</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant/20 chamfer-clip-sm bg-white/5">
+<span class="material-symbols-outlined text-primary text-lg">how_to_vote</span>
+<span class="font-label-caps text-[10px] text-on-surface/70">公平投票</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant/20 chamfer-clip-sm bg-white/5">
+<span class="material-symbols-outlined text-primary text-lg">cyclone</span>
+<span class="font-label-caps text-[10px] text-on-surface/70">命运轮盘</span>
+</div>
+</div>
+</div>
+<!-- Call to Action -->
+<div class="flex flex-col md:flex-row gap-6 w-full max-w-xl">
+<button class="flex-1 group relative bg-primary text-on-primary-fixed font-headline-md text-headline-md chamfer-clip py-5 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">swords</span>
+<span>创建对局</span>
+</button>
+<button class="flex-1 group relative bg-transparent text-secondary-fixed-dim border border-secondary-fixed-dim/40 font-headline-md text-headline-md chamfer-clip py-5 flex items-center justify-center gap-3 hover:bg-secondary-fixed-dim/5 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">login</span>
+<span>加入对局</span>
+</button>
+</div>
+<!-- Technical Metadata -->
+<div class="mt-20 flex gap-10 font-code-sm text-[11px] text-outline/40">
+<div class="flex flex-col items-center">
+<span>SYSTEM STATUS</span>
+<span class="text-on-surface/60">NOMINAL</span>
+</div>
+<div class="flex flex-col items-center">
+<span>ENCRYPTION</span>
+<span class="text-on-surface/60">AES-256-GCM</span>
+</div>
+<div class="flex flex-col items-center">
+<span>GEO-SYNC</span>
+<span class="text-on-surface/60">ACTIVE</span>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center w-full px-margin-lg py-margin-xs fixed bottom-0 left-0 bg-background/80 backdrop-blur-sm border-t border-white/5 z-50">
+<div class="font-code-sm text-[11px] text-outline/50 uppercase tracking-widest">© 2024 CS-RULE-ENGINE v1.0.4 • 24MS</div>
+<div class="flex gap-margin-md items-center">
+<a class="text-outline/50 hover:text-primary transition-colors font-code-sm text-[11px] uppercase" href="#">Terms</a>
+<a class="text-outline/50 hover:text-primary transition-colors font-code-sm text-[11px] uppercase" href="#">Privacy</a>
+<a class="text-outline/50 hover:text-primary transition-colors font-code-sm text-[11px] uppercase" href="#">Docs</a>
+</div>
+</footer>
+<script>
+(function() {
+    const canvas = document.getElementById('dot-matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dots = [];
+    const spacing = 32;
+    const mouse = { x: -1000, y: -1000 };
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        dots = [];
+        for (let x = spacing / 2; x < width; x += spacing) {
+            for (let y = spacing / 2; y < height; y += spacing) {
+                dots.push({ x, y, baseSize: 1 });
+            }
+        }
+    }
+
+    window.addEventListener('resize', init);
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        dots.forEach(dot => {
+            const dx = mouse.x - dot.x;
+            const dy = mouse.y - dot.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = 150;
+            
+            let size = dot.baseSize;
+            let color = 'rgba(216, 228, 242, 0.15)';
+
+            if (dist < maxDist) {
+                const ratio = 1 - (dist / maxDist);
+                size = dot.baseSize + (ratio * 4);
+                color = `rgba(0, 209, 255, ${0.15 + (ratio * 0.85)})`;
+            }
+
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+})();
+</script></body></html>

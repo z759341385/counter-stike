@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-dark: #000000;
+  --color-primary: #a4e6ff;
+  --color-on-primary: #003543;
+  --color-secondary: #ffdb9d;
+  --color-on-secondary: #412d00;
+  --color-surface-container: #15212b;
+  --color-outline: #859399;
+  --color-text-primary: #d8e4f2;
+  --color-text-secondary: #bbc9cf;
+  --font-family-display: 'Space Grotesk', sans-serif;
+  --font-family-body: 'Hanken Grotesk', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── 全局样式 ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.chamfer-clip {
+  clip-path: polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px);
+}
+
+.chamfer-clip-sm {
+  clip-path: polygon(4px 0%, 100% 0%, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0% 100%, 0% 4px);
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-family-body);
+  background: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+}
+
+/* ── 静态点阵背景 ── */
+.dot-pattern {
+  background-image: radial-gradient(rgba(216, 228, 242, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ── 按钮样式重置 ── */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: var(--font-family-display);
+  font-weight: 600;
+}
+
+.btn-base:active {
+  transform: scale(0.98);
+}
+
+/* ── 模态框背景 ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* ── 输入框 ── */
+.input-field {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── 动画 ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
