@@ -84,6 +84,29 @@ export function getRuleById(id: number): Rule | undefined {
   return db.prepare('SELECT * FROM rules WHERE id = ?').get(id) as Rule | undefined;
 }
 
+/** 获取所有规则（包含禁用的） */
+export function getAllRules(): Rule[] {
+  return db.prepare('SELECT * FROM rules').all() as Rule[];
+}
+
+/** 添加规则 */
+export function addRule(name: string, description: string, weight: number): number {
+  const info = db.prepare('INSERT INTO rules (name, description, weight, is_active) VALUES (?, ?, ?, 1)').run(name, description, weight);
+  return info.lastInsertRowid as number;
+}
+
+/** 更新规则 */
+export function updateRule(id: number, name: string, description: string, weight: number, is_active: number): boolean {
+  const info = db.prepare('UPDATE rules SET name = ?, description = ?, weight = ?, is_active = ? WHERE id = ?').run(name, description, weight, is_active, id);
+  return info.changes > 0;
+}
+
+/** 删除规则 */
+export function deleteRule(id: number): boolean {
+  const info = db.prepare('DELETE FROM rules WHERE id = ?').run(id);
+  return info.changes > 0;
+}
+
 /** 获取数据库实例（供高级用途） */
 export function getDb(): Database.Database {
   return db;

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CS RULE ENGINE - TACTICAL DEPLOYMENT</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Hanken+Grotesk:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#00d1ff",
+                        "secondary": "#feb700",
+                        "surface": "#02080d",
+                        "surface-container": "#081018",
+                        "outline": "#1e2a35",
+                        "on-surface": "#d8e4f2",
+                        "on-surface-variant": "#4a5a6a"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "headline": ["Space Grotesk"],
+                        "body": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #02080d;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 32px 32px;
+            color: #d8e4f2;
+            overflow-x: hidden;
+        }
+        .text-glow-blue {
+            text-shadow: 0 0 15px rgba(0, 209, 255, 0.5);
+        }
+        .chamfer-clip-btn {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 98% 100%, 0 100%);
+        }
+        .chamfer-clip-card {
+            clip-path: polygon(5% 0, 100% 0, 100% 100%, 0 100%, 0 15%);
+        }
+        .dashed-grid {
+            background-image: linear-gradient(to right, #1e2a35 1px, transparent 1px), linear-gradient(to bottom, #1e2a35 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .vs-divider {
+            position: relative;
+        }
+        .vs-divider::before, .vs-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 1px;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, #1e2a35);
+        }
+        .vs-divider::before { top: -110px; }
+        .vs-divider::after { bottom: -110px; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+        }
+    </style>
+<style data-stitch-cursor="">*{cursor:crosshair!important}[contenteditable="true"]:focus,.cursor-text:focus{cursor:text!important}</style><style data-stitch-scroll-lock="">html,body{overflow:hidden!important}</style></head>
+<body class="flex flex-col min-h-screen font-body">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center w-full px-12 py-6 absolute top-0 left-0 z-50">
+<div class="font-headline text-2xl font-bold tracking-tighter text-primary">CS RULE ENGINE</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container/80 border border-outline px-3 py-1 text-[10px] flex gap-2">
+<span class="text-on-surface-variant">房间:</span>
+<span class="text-primary font-bold">7921</span>
+</div>
+<button class="border border-red-900/50 text-red-500 text-[10px] px-3 py-1 hover:bg-red-500/10 transition-all uppercase tracking-widest">
+                解散房间
+            </button>
+<div class="flex gap-3 ml-2">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center pt-24 pb-24">
+<!-- Main Header -->
+<div class="text-center mb-16 relative">
+<p class="text-[10px] text-on-surface-variant tracking-[0.8em] uppercase mb-1">战 术 部 署</p>
+<h1 class="font-headline text-7xl font-bold text-primary tracking-tight text-glow-blue">战术部署</h1>
+</div>
+<div class="w-full max-w-[1600px] grid grid-cols-12 gap-8 px-12 relative items-center">
+<!-- Alpha Team -->
+<section class="col-span-2 space-y-3 max-w-[280px]">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-1.5 h-6 bg-primary shadow-[0_0_10px_rgba(0,209,255,0.8)]"></div>
+<h2 class="font-headline text-xl font-bold text-white uppercase tracking-wider">阿尔法小队</h2>
+</div>
+<!-- Player Slot: Voted State -->
+<div class="relative group">
+<div class="absolute -inset-[1px] bg-primary shadow-[0_0_15px_rgba(0,209,255,0.4)] opacity-100"></div>
+<div class="relative bg-surface border border-primary p-4 flex flex-col gap-2">
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="swords">swords</span>
+<span class="text-sm font-bold text-white">1 <span class="text-[10px] text-on-surface-variant">(你)</span></span>
+</div>
+<div class="bg-primary/20 text-primary text-[8px] px-1.5 py-0.5 border border-primary/30 font-bold tracking-tighter">READY / 已投</div>
+</div>
+<button class="text-[9px] border border-red-900/50 px-2 py-1 text-red-500 hover:bg-red-500/10 transition-colors self-end">退出观战</button>
+</div>
+</div>
+<!-- Empty Slots -->
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center group cursor-pointer hover:border-on-surface-variant/50 transition-all">
+<div class="flex items-center gap-2 opacity-30 group-hover:opacity-60">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+<span class="text-[10px] tracking-widest">加入阿尔法</span>
+</div>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center opacity-40">
+<div class="flex items-center gap-2 opacity-20">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="text-[10px] tracking-widest">LOCKED</span>
+</div>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center opacity-40">
+<div class="flex items-center gap-2 opacity-20">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="text-[10px] tracking-widest">LOCKED</span>
+</div>
+</div>
+</section>
+<!-- Center Voting / VS Area -->
+<section class="col-span-8 flex flex-col items-center">
+<div class="vs-divider py-12">
+<span class="font-headline text-3xl italic font-black text-on-surface-variant/20 tracking-tighter">VS</span>
+</div>
+<!-- Rule Cards -->
+<div class="grid grid-cols-3 gap-4 w-full px-4 mt-8">
+<!-- Rule A -->
+<div class="bg-surface-container border border-outline p-6 flex flex-col items-center chamfer-clip-card relative group hover:border-primary/50 transition-all">
+<div class="absolute top-4 left-4 w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center text-[10px] font-bold text-red-500 border border-red-500/30">A</div>
+<span class="material-symbols-outlined text-primary text-4xl mb-4 mt-4" data-icon="volume_off">volume_off</span>
+<h3 class="text-sm font-bold text-white mb-2">静音突击</h3>
+<p class="text-[10px] text-on-surface-variant text-center leading-tight mb-6">禁止语音通讯，仅限无线电。极致寂静体验。</p>
+<div class="w-full h-[2px] bg-outline mb-4 flex">
+<div class="h-full w-1/3 bg-primary"></div>
+</div>
+<div class="flex -space-x-1">
+<div class="w-5 h-5 rounded-full bg-primary border-2 border-surface flex items-center justify-center text-[8px] text-surface font-bold">P1</div>
+<div class="w-5 h-5 rounded-full bg-secondary border-2 border-surface flex items-center justify-center text-[8px] text-surface font-bold">B1</div>
+</div>
+</div>
+<!-- Rule B -->
+<div class="bg-surface-container border border-primary p-6 flex flex-col items-center chamfer-clip-card relative group shadow-[0_0_30px_rgba(0,209,255,0.1)]">
+<div class="absolute top-4 left-4 w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-[10px] font-bold text-secondary border border-secondary/30">B</div>
+<span class="material-symbols-outlined text-secondary text-4xl mb-4 mt-4" data-icon="dark_mode">dark_mode</span>
+<h3 class="text-sm font-bold text-white mb-2">夜战模式</h3>
+<p class="text-[10px] text-on-surface-variant text-center leading-tight mb-6">强制佩戴夜视镜，模拟零能见度环境作战。</p>
+<div class="w-full h-[2px] bg-outline mb-4 flex">
+<div class="h-full w-2/3 bg-secondary"></div>
+</div>
+<div class="flex -space-x-1">
+<div class="w-5 h-5 rounded-full bg-primary border-2 border-surface flex items-center justify-center text-[8px] text-surface font-bold">P3</div>
+<div class="w-5 h-5 rounded-full bg-primary border-2 border-surface flex items-center justify-center text-[8px] text-surface font-bold">P4</div>
+<div class="w-5 h-5 rounded-full bg-secondary border-2 border-surface flex items-center justify-center text-[8px] text-surface font-bold">B2</div>
+</div>
+</div>
+<!-- Rule C -->
+<div class="bg-surface-container border border-outline p-6 flex flex-col items-center chamfer-clip-card relative group hover:border-primary/50 transition-all">
+<div class="absolute top-4 left-4 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white/50 border border-white/10">C</div>
+<span class="material-symbols-outlined text-white/50 text-4xl mb-4 mt-4" data-icon="skillet">skillet</span>
+<h3 class="text-sm font-bold text-white/50 mb-2">刀锋战士</h3>
+<p class="text-[10px] text-on-surface-variant/50 text-center leading-tight mb-6">前3局仅限近战武器。最终生存考验。</p>
+<div class="w-full h-[2px] bg-outline/50 mb-4"></div>
+<div class="text-[8px] text-on-surface-variant/30 uppercase tracking-widest">No Votes</div>
+</div>
+</div>
+<button class="mt-16 bg-primary text-surface font-bold py-4 px-16 flex items-center gap-3 chamfer-clip-btn hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,209,255,0.4)]">
+<span class="material-symbols-outlined text-lg" data-icon="casino">casino</span>
+<span class="tracking-[0.2em]">开始抽取规则</span>
+</button>
+</section>
+<!-- Bravo Team -->
+<section class="col-span-2 space-y-3 text-right max-w-[280px] justify-self-end">
+<div class="flex flex-row-reverse items-center gap-3 mb-6">
+<div class="w-1.5 h-6 bg-secondary shadow-[0_0_10px_rgba(254,183,0,0.8)]"></div>
+<h2 class="font-headline text-xl font-bold text-white uppercase tracking-wider">布拉沃小队</h2>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center group cursor-pointer hover:border-secondary/50 transition-all">
+<div class="flex flex-row-reverse items-center gap-2 opacity-30 group-hover:opacity-60">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+<span class="text-[10px] tracking-widest uppercase">加入布拉沃</span>
+</div>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center opacity-40">
+<div class="flex flex-row-reverse items-center gap-2 opacity-20">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="text-[10px] tracking-widest">LOCKED</span>
+</div>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center opacity-40">
+<div class="flex flex-row-reverse items-center gap-2 opacity-20">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="text-[10px] tracking-widest">LOCKED</span>
+</div>
+</div>
+<div class="bg-surface-container/30 border border-outline p-4 flex items-center justify-center opacity-40">
+<div class="flex flex-row-reverse items-center gap-2 opacity-20">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="text-[10px] tracking-widest">LOCKED</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Spectator Area -->
+<div class="mt-16 w-full max-w-[1400px] px-12 opacity-60">
+<div class="flex items-center gap-2 mb-4">
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full px-12 py-4 flex justify-between items-center text-[9px] font-label-caps text-on-surface-variant border-t border-outline/50 bg-surface/80 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+<div class="flex gap-8 uppercase tracking-[0.2em]">
+<span class="">System Status: <span class="text-primary">Nominal</span></span>
+<span class="">Encryption: <span class="text-white">AES-256-GCM</span></span>
+<span class="">Geo-Sync: <span class="text-primary">Active</span></span>
+</div>
+<div class="tracking-[0.3em]">
+            © 2024 CS-RULE-ENGINE v1.0.4. Latency: 24ms
+        </div>
+<div class="flex gap-6 uppercase tracking-[0.2em]">
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">API Docs</a>
+</div>
+</footer>
+</body></html>

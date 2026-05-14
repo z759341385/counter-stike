@@ -49,10 +49,18 @@ export function startVote(roomId: string, socketId: string): VoteOption[] | stri
   if (room.status === 'VOTING') return '投票已在进行中';
 
   // 从数据库抽取
-  const activeRules = getActiveRules();
-  if (activeRules.length < 3) return `启用的规则不足 3 条（当前 ${activeRules.length} 条）`;
+  const allActiveRules = getActiveRules();
+  let availableRules = allActiveRules.filter(r => !room.usedRuleIds.includes(r.id));
 
-  const picked = weightedRandomPick(activeRules, 3);
+  // 如果剩余规则不足 3 条，重置可用规则池
+  if (availableRules.length < 3) {
+    room.usedRuleIds = [];
+    availableRules = allActiveRules;
+  }
+
+  if (availableRules.length < 3) return `启用的规则不足 3 条（当前 ${availableRules.length} 条）`;
+
+  const picked = weightedRandomPick(availableRules, 3);
   const options: VoteOption[] = picked.map(r => ({
     id: r.id,
     name: r.name,

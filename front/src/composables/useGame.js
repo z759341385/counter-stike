@@ -13,6 +13,8 @@ export const errorMsg = ref('')
 export const spinData = ref(null)
 export const showWinner = ref(false)
 export const winningRule = ref(null)
+export const adminPassword = ref('')
+export const allRules = ref([])
 
 export const isHost = computed(() => {
   const token = localStorage.getItem('cs_rule_token');
@@ -63,12 +65,10 @@ export function joinRoom(id, name) {
 }
 
 export function takeSeat(targetIdx) {
-  console.log('[Game] 发起上座请求, 目标位置:', targetIdx);
   socket.emit('take_seat', { targetIdx });
 }
 
 export function leaveSeat() {
-  console.log('[Game] 发起退到观战区请求');
   socket.emit('leave_seat');
 }
 
@@ -96,18 +96,76 @@ export function resetRoom() {
   socket.emit('reset_room', { roomId: roomId.value });
 }
 
+export function destroyRoom() {
+  socket.emit('destroy_room', { roomId: roomId.value });
+}
+
+// ── 管理员方法 ──
+
+export function adminLogin(password) {
+  return new Promise((resolve) => {
+    connectSocket();
+    socket.emit('admin_login', password, (res) => {
+      if (res.success) {
+        adminPassword.value = password;
+        currentView.value = 'admin';
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
+}
+
+export function fetchAllRules() {
+  socket.emit('admin_get_rules', adminPassword.value, (res) => {
+    if (res.success) allRules.value = res.rules;
+  });
+}
+
+export function saveRule(rule) {
+  const event = rule.id ? 'admin_update_rule' : 'admin_add_rule';
+  socket.emit(event, { password: adminPassword.value, rule }, (res) => {
+    if (res.success) fetchAllRules();
+  });
+}
+
+export function removeRule(id) {
+  socket.emit('admin_delete_rule', { password: adminPassword.value, id }, (res) => {
+    if (res.success) fetchAllRules();
+  });
+}
+
 // ── Socket 事件 ──
 
 function updateRoomState(room) {
   if (!room) return;
-  console.log('[Game] 收到房间更新:', room);
   if (Array.isArray(room.players)) {
-    players.value = [...room.players]; // 强制触发响应式
+    players.value = [...room.players];
   }
   if (Array.isArray(room.spectators)) {
     spectators.value = [...room.spectators];
   }
+  if (Array.isArray(room.voteOptions)) {
+    voteOptions.value = [...room.voteOptions];
+  }
   roomStatus.value = room.status || 'WAITING';
+
+  // 恢复已投票状态
+  if (Array.isArray(room.votes)) {
+    const myToken = localStorage.getItem('cs_rule_token');
+    hasVoted.value = room.votes.includes(myToken);
+  }
+
+  // 恢复轮盘数据
+  if (room.lastSpinResult) {
+    spinData.value = room.lastSpinResult;
+    winningRule.value = room.lastSpinResult.winner;
+    // 如果已经处于结果阶段，直接显示赢家面板
+    if (room.status === 'RESULT') {
+      showWinner.value = true;
+    }
+  }
 }
 
 socket.on('room_update', (room) => {
@@ -117,13 +175,16 @@ socket.on('room_update', (room) => {
 socket.on('reconnect_success', ({ roomId: rid, room }) => {
   roomId.value = rid;
   updateRoomState(room);
-  currentView.value = room.status === 'WAITING' ? 'lobby' : (room.status === 'VOTING' ? 'voting' : 'lobby');
+  currentView.value = 'lobby';
 });
 
 socket.on('vote_started', (options) => {
   voteOptions.value = options;
   hasVoted.value = false;
-  currentView.value = 'voting';
+  selectedOption.value = null;
+  totalVotes.value = 0;
+  showWinner.value = false;
+  roomStatus.value = 'VOTING';
 });
 
 socket.on('vote_progress', (data) => {
@@ -134,11 +195,18 @@ socket.on('spin_wheel', (data) => {
   spinData.value = data;
   winningRule.value = data.winner;
   showWinner.value = false;
-  currentView.value = 'roulette';
+  roomStatus.value = 'SPINNING';
 });
 
 socket.on('room_reset', () => {
+  roomStatus.value = 'WAITING';
   currentView.value = 'lobby';
+});
+
+socket.on('room_destroyed', () => {
+  localStorage.removeItem('cs_rule_token');
+  currentView.value = 'home';
+  roomId.value = '';
 });
 
 socket.on('error_msg', (msg) => {

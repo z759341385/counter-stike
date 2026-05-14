@@ -27,6 +27,8 @@ export interface RoomState {
   status: RoomStatus;
   voteOptions: VoteOption[];
   votes: Map<string, number>;
+  lastSpinResult?: any;
+  usedRuleIds: number[];
 }
 
 const rooms = new Map<string, RoomState>();
@@ -56,6 +58,7 @@ export function createRoom(hostSocketId: string, hostName: string): { roomId: st
     status: 'WAITING',
     voteOptions: [],
     votes: new Map(),
+    usedRuleIds: [],
   };
 
   room.players[0] = { socketId: hostSocketId, token, playerName: hostName, isHost: true, connected: true };
@@ -194,7 +197,32 @@ export function removePlayer(roomId: string, token: string): { destroyed: boolea
   return { destroyed: false };
 }
 
-export function getRoom(roomId: string) { return rooms.get(roomId); }
+export function destroyRoom(roomId: string): boolean {
+  const room = rooms.get(roomId);
+  if (!room) return false;
+
+  // 清理所有玩家的 token 映射
+  [...room.players, ...room.spectators].forEach(p => {
+    if (p) tokenToRoom.delete(p.token);
+  });
+
+  rooms.delete(roomId);
+  return true;
+}
+
+export function getRoom(roomId: string) {
+  return rooms.get(roomId);
+}
+
+/** 获取可序列化的房间数据 (用于 socket 发送) */
+export function getRoomData(roomId: string) {
+  const room = rooms.get(roomId);
+  if (!room) return null;
+  return {
+    ...room,
+    votes: Array.from(room.votes.keys()), // 将 Map 转换为已投票者的 token 数组
+  };
+}
 export function getPlayerList(roomId: string) { return rooms.get(roomId)?.players ?? []; }
 export function getSpectators(roomId: string) { return rooms.get(roomId)?.spectators ?? []; }
 

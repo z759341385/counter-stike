@@ -6,7 +6,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { initDatabase } from './db';
+import { initDatabase, getAllRules, addRule, updateRule, deleteRule } from './db';
 import * as rooms from './rooms';
 import { startVote, submitVote } from './vote';
 import { stopVoteAndSpin } from './spin';
@@ -14,6 +14,7 @@ import { logger } from './logger';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DISCONNECT_TIMEOUT = 60 * 1000;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin888';
 
 const app = express();
 app.use(cors());
@@ -33,8 +34,8 @@ io.on('connection', (socket) => {
     const result = rooms.reconnectPlayer(token, socket.id);
     if (result) {
       socket.join(result.roomId);
-      socket.emit('reconnect_success', { roomId: result.roomId, room: rooms.getRoom(result.roomId) });
-      io.to(result.roomId).emit('room_update', rooms.getRoom(result.roomId));
+      socket.emit('reconnect_success', { roomId: result.roomId, room: rooms.getRoomData(result.roomId) });
+      io.to(result.roomId).emit('room_update', rooms.getRoomData(result.roomId));
     }
   }
 
@@ -42,7 +43,7 @@ io.on('connection', (socket) => {
     const { roomId, token } = rooms.createRoom(socket.id, playerName);
     socket.join(roomId);
     if (typeof callback === 'function') callback({ success: true, roomId, token });
-    io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+    io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
   });
 
   socket.on('join_room', ({ roomId, playerName }, callback) => {
@@ -53,7 +54,7 @@ io.on('connection', (socket) => {
     }
     socket.join(roomId);
     if (typeof callback === 'function') callback({ success: true, roomId, token: result.token });
-    io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+    io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
   });
 
   // 上座
@@ -65,7 +66,7 @@ io.on('connection', (socket) => {
 
     if (roomId && player && rooms.takeSeat(roomId, player.token, targetIdx)) {
       logger.info('Room', `玩家 ${player.playerName} 上座成功: ${targetIdx}`);
-      io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
     }
   });
 
@@ -77,7 +78,7 @@ io.on('connection', (socket) => {
 
     if (roomId && player && rooms.leaveSeat(roomId, player.token)) {
       logger.info('Room', `玩家 ${player.playerName} 退回到观战区`);
-      io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
     }
   });
 
@@ -87,6 +88,8 @@ io.on('connection', (socket) => {
       if (typeof callback === 'function') callback({ success: false, error: result });
     } else {
       if (typeof callback === 'function') callback({ success: true });
+      const room = rooms.getRoom(roomId);
+      if (room) room.lastSpinResult = null; // 开始新投票时清除旧结果
       io.to(roomId).emit('vote_started', result);
     }
   });
@@ -107,6 +110,8 @@ io.on('connection', (socket) => {
       if (typeof callback === 'function') callback({ success: false, error: result });
     } else {
       if (typeof callback === 'function') callback({ success: true });
+      const room = rooms.getRoom(roomId);
+      if (room) room.lastSpinResult = result;
       io.to(roomId).emit('spin_wheel', result);
     }
   });
@@ -119,9 +124,22 @@ io.on('connection', (socket) => {
         room.status = 'WAITING';
         room.voteOptions = [];
         room.votes = new Map();
+        room.lastSpinResult = null;
         if (typeof callback === 'function') callback({ success: true });
         io.to(roomId).emit('room_reset');
-        io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+        io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
+      }
+    }
+  });
+
+  socket.on('destroy_room', ({ roomId }, callback) => {
+    const room = rooms.getRoom(roomId);
+    if (room) {
+      const host = [...room.players, ...room.spectators].find(p => p && p.socketId === socket.id && p.isHost);
+      if (host) {
+        io.to(roomId).emit('room_destroyed');
+        rooms.destroyRoom(roomId);
+        if (typeof callback === 'function') callback({ success: true });
       }
     }
   });
@@ -129,7 +147,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const roomId = rooms.handleDisconnect(socket.id);
     if (roomId) {
-      io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
       setTimeout(() => {
         const room = rooms.getRoom(roomId);
         if (!room) return;
@@ -137,11 +155,55 @@ io.on('connection', (socket) => {
         if (player && !player.connected) {
           const result = rooms.removePlayer(roomId, player.token);
           if (result && !result.destroyed) {
-            io.to(roomId).emit('room_update', rooms.getRoom(roomId));
+            io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
           }
         }
       }, DISCONNECT_TIMEOUT);
     }
+  });
+
+  // ── 管理员接口 ──
+  socket.on('admin_login', (password, callback) => {
+    if (password === ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: true });
+    } else {
+      if (typeof callback === 'function') callback({ success: false, error: '密码错误' });
+    }
+  });
+
+  socket.on('admin_get_rules', (password, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    if (typeof callback === 'function') callback({ success: true, rules: getAllRules() });
+  });
+
+  socket.on('admin_add_rule', ({ password, rule }, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    const id = addRule(rule.name, rule.description, rule.weight || 5);
+    if (typeof callback === 'function') callback({ success: true, id });
+  });
+
+  socket.on('admin_update_rule', ({ password, rule }, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    updateRule(rule.id, rule.name, rule.description, rule.weight, rule.is_active);
+    if (typeof callback === 'function') callback({ success: true });
+  });
+
+  socket.on('admin_delete_rule', ({ password, id }, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    deleteRule(id);
+    if (typeof callback === 'function') callback({ success: true });
   });
 });
 

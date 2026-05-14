@@ -65,6 +65,11 @@ export function stopVoteAndSpin(roomId: string, socketId: string): SpinResult | 
     }
   }
 
+  // 记录已使用规则
+  if (!room.usedRuleIds.includes(winner.id)) {
+    room.usedRuleIds.push(winner.id);
+  }
+
   room.status = 'RESULT';
 
   logger.info('Spin', `房间 ${roomId} | 角度: ${targetAngle.toFixed(2)}° | 获胜: ${winner.name}`);

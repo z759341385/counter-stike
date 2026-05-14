@@ -1,15 +1,20 @@
 <script setup>
 /**
- * HomeView - 首页 (最终间距优化版)
+ * HomeView - 首页 (国际化版)
  */
 import { ref, onMounted, onUnmounted } from 'vue'
-import { createRoom, joinRoom, errorMsg } from '../composables/useGame'
+import { useI18n } from 'vue-i18n'
+import { createRoom, joinRoom, errorMsg, adminLogin } from '../composables/useGame'
+
+const { t } = useI18n()
 
 const showCreateModal = ref(false)
 const showJoinModal = ref(false)
 const nameInput = ref('')
 const roomIdInput = ref('')
 const joinNameInput = ref('')
+const showAdminModal = ref(false)
+const adminPwInput = ref('')
 
 // ── 点阵背景动画 ──
 const canvasRef = ref(null)
@@ -85,25 +90,36 @@ function handleJoin() {
   joinRoom(roomIdInput.value.trim(), joinNameInput.value.trim())
   showJoinModal.value = false
 }
+
+async function handleAdminEntry() {
+  showAdminModal.value = true
+}
+
+async function handleAdminLogin() {
+  const ok = await adminLogin(adminPwInput.value)
+  if (ok) {
+    showAdminModal.value = false
+    adminPwInput.value = ''
+  } else {
+    alert('密码错误')
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-black text-text-primary flex flex-col items-center relative overflow-hidden">
-    <!-- 背景层：静态点阵 + 交互点阵 -->
+    <!-- 背景层 -->
     <div class="fixed inset-0 pointer-events-none z-0 dot-pattern opacity-20"></div>
     <canvas ref="canvasRef" class="fixed inset-0 pointer-events-none z-1 opacity-40"></canvas>
 
     <!-- Header -->
     <header
       class="flex justify-between items-center w-full px-8 md:px-16 py-6 fixed top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5">
-      <div class="font-display text-xl md:text-2xl tracking-tighter text-primary font-bold uppercase">CS Rule Engine
-      </div>
-
+      <div @click="handleAdminEntry" class="font-display text-xl md:text-2xl tracking-tighter text-primary font-bold uppercase cursor-pointer select-none active:opacity-50">CS Rule Engine</div>
     </header>
 
     <!-- Main Content -->
     <main class="flex-grow flex flex-col items-center justify-center w-full max-w-6xl px-6 relative z-10 pt-32 pb-20">
-
       <!-- Hero Section -->
       <div class="w-full mb-16 animate-[fadeIn_0.8s_ease-out] text-center">
         <h1
@@ -114,15 +130,15 @@ function handleJoin() {
         <div class="flex flex-wrap justify-center gap-6 mt-8">
           <div class="flex items-center gap-3 px-5 py-2.5 border border-outline/20 chamfer-clip-sm bg-white/5">
             <span class="material-symbols-outlined text-primary text-xl">casino</span>
-            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">随机规则</span>
+            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">{{ $t('voting.progress') }}</span>
           </div>
           <div class="flex items-center gap-3 px-5 py-2.5 border border-outline/20 chamfer-clip-sm bg-white/5">
             <span class="material-symbols-outlined text-primary text-xl">how_to_vote</span>
-            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">公平投票</span>
+            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">{{ $t('voting.title') }}</span>
           </div>
           <div class="flex items-center gap-3 px-5 py-2.5 border border-outline/20 chamfer-clip-sm bg-white/5">
             <span class="material-symbols-outlined text-primary text-xl">cyclone</span>
-            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">命运轮盘</span>
+            <span class="font-mono text-[11px] tracking-widest uppercase opacity-70">{{ $t('roulette.title') }}</span>
           </div>
         </div>
       </div>
@@ -132,12 +148,12 @@ function handleJoin() {
         <button @click="showCreateModal = true"
           class="flex-1 btn-base bg-primary text-on-primary chamfer-clip py-6 flex items-center justify-center gap-4 hover:brightness-110 shadow-[0_0_50px_rgba(164,230,255,0.15)]">
           <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">swords</span>
-          <span class="text-xl tracking-tight uppercase font-bold">创建对局</span>
+          <span class="text-xl tracking-tight uppercase font-bold">{{ $t('home.createRoom') }}</span>
         </button>
         <button @click="showJoinModal = true"
           class="flex-1 btn-base bg-transparent text-secondary border border-secondary/40 chamfer-clip py-6 flex items-center justify-center gap-4 hover:bg-secondary/10">
           <span class="material-symbols-outlined text-3xl">login</span>
-          <span class="text-xl tracking-tight uppercase font-bold">加入对局</span>
+          <span class="text-xl tracking-tight uppercase font-bold">{{ $t('home.joinRoom') }}</span>
         </button>
       </div>
 
@@ -171,35 +187,54 @@ function handleJoin() {
     <!-- Modals -->
     <div v-if="showCreateModal" class="modal-overlay" @click.self="showCreateModal = false">
       <div
-        class="modal-content w-full max-w-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
-        <h2 class="font-display text-2xl font-bold text-primary mb-6 uppercase">创建新对局</h2>
+        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        <h2 class="font-display text-2xl font-bold text-primary mb-6 uppercase">{{ $t('home.createRoom') }}</h2>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">你的战斗昵称</label>
-          <input v-model="nameInput" class="input-field chamfer-clip-sm" placeholder="INPUT CALLSIGN..." maxlength="20"
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderName') }}</label>
+          <input v-model="nameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')" maxlength="20"
             @keyup.enter="handleCreate" />
         </div>
         <button @click="handleCreate"
-          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold">初始化对局</button>
+          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold">{{ $t('home.initGame') }}</button>
       </div>
     </div>
 
     <div v-if="showJoinModal" class="modal-overlay" @click.self="showJoinModal = false">
       <div
-        class="modal-content w-full max-w-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
-        <h2 class="font-display text-2xl font-bold text-secondary mb-6 uppercase">加入已有对局</h2>
+        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        <h2 class="font-display text-2xl font-bold text-secondary mb-6 uppercase">{{ $t('home.joinRoom') }}</h2>
         <div class="mb-4">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">房间号码 (4-DIGIT)</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderRoomId') }}</label>
           <input v-model="roomIdInput"
             class="input-field chamfer-clip-sm text-center text-2xl tracking-[0.4em] font-display uppercase"
             placeholder="0000" maxlength="4" @keyup.enter="handleJoin" />
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">你的战斗昵称</label>
-          <input v-model="joinNameInput" class="input-field chamfer-clip-sm" placeholder="INPUT CALLSIGN..."
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderName') }}</label>
+          <input v-model="joinNameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')"
             maxlength="20" @keyup.enter="handleJoin" />
         </div>
         <button @click="handleJoin"
-          class="w-full btn-base bg-secondary text-on-secondary chamfer-clip py-4 uppercase font-bold">加入战局</button>
+          class="w-full btn-base bg-secondary text-on-secondary chamfer-clip py-4 uppercase font-bold">{{ $t('home.enterGame') }}</button>
+      </div>
+    </div>
+
+    <div v-if="showAdminModal" class="modal-overlay" @click.self="showAdminModal = false">
+      <div
+        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary">security</span>
+          <h2 class="font-display text-2xl font-bold text-primary uppercase">Authorization</h2>
+        </div>
+        <div class="mb-6">
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Security Access
+            Code</label>
+          <input v-model="adminPwInput" type="password" class="input-field chamfer-clip-sm" placeholder="••••••••"
+            @keyup.enter="handleAdminLogin" />
+        </div>
+        <button @click="handleAdminLogin"
+          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold tracking-widest hover:brightness-110">Access
+          Terminal</button>
       </div>
     </div>
 
