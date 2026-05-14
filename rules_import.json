@@ -1,0 +1,206 @@
+[
+  {
+    "name": "西部牛仔",
+    "description": "全员只能使用沙漠之鹰 (Desert Eagle)，不允许购买任何其他武器。考验你的手枪枪法！",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "喷子集会",
+    "description": "只能购买霰弹枪 (新星、XM1014、锯短、MAG-7)。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "战神遗嘱",
+    "description": "全队只有一人可以买步枪，其他人只能买手枪。若长枪手阵亡，队友可捡起。",
+    "weight": 8,
+    "is_active": 1
+  },
+  {
+    "name": "双枪老太婆",
+    "description": "全员禁止买长枪，必须且只能购买 双持贝瑞塔。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "重装突击",
+    "description": "仅限购买 M249 或 内格夫。看到敌人必须按住左键不撒手。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "电击派对",
+    "description": "每个人必须买一把电击枪 (Zeus x27)，本局必须尝试电死至少一人。",
+    "weight": 7,
+    "is_active": 1
+  },
+  {
+    "name": "帕金森模式",
+    "description": "只要开火射击，就必须配合不断的快速蹲起。极度考验控枪。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "左撇子战役",
+    "description": "全员控制台输入 cl_righthand 0 切换到左手持枪模式。视觉极不习惯。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "换弹强迫症",
+    "description": "只要开过火（哪怕一发），必须找地方立即换弹。未换弹禁止再次射击。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "麦克雷时间",
+    "description": "仅限左轮/沙鹰。开火前必须先按 F (检视武器) 耍帅，转完圈才能打。",
+    "weight": 6,
+    "is_active": 1
+  },
+  {
+    "name": "静音突击",
+    "description": "全程禁止按 Shift 走静步。必须大脚步或蹲行，违规当场判负。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "盲盒捡漏",
+    "description": "开局扔掉自己的枪，这回合只能用捡来的武器。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "全员 Rush B",
+    "description": "无论是 T 还是 CT，开局必须全员第一时间冲向 B 区，中途不准转点。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "雷神降临",
+    "description": "每个人开局必须买满闪光弹和手雷。交火前，必须先把所有投掷物扔光。",
+    "weight": 6,
+    "is_active": 1
+  },
+  {
+    "name": "倒车入库",
+    "description": "进攻方进入包点时，必须倒着走进去，直到看到敌人才准转身。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "人质危机",
+    "description": "T 阵营必须有一人背着 C4 但不准下包，直到倒计时剩 30 秒才能开始进攻。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "指挥官模式",
+    "description": "队内只有一人可以开麦说话报点，其他人全程闭麦，全凭眼神交流。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "喷漆为号",
+    "description": "击杀敌人后，必须在敌人尸体附近喷漆 (涂鸦) 才能继续前进。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "战地医生",
+    "description": "每队指定 1 人，负责给队友提供投掷物掩护，禁止使用主武器。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "和平协议",
+    "description": "双方在回合开始的前 30 秒内禁止开枪。30 秒倒计时一结束立刻开战。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "战后遗产",
+    "description": "上回合幸存下来的玩家，本回合开始必须将手中的长枪丢给对方，然后自己重新购买。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "VIP 刺杀案",
+    "description": "每队抽一名 VIP，VIP 死亡则全队判负。VIP 只能用 P2000/Glock。",
+    "weight": 6,
+    "is_active": 1
+  },
+  {
+    "name": "慈善募捐",
+    "description": "上回合的 MVP 下回合不能买枪，必须把钱全部买枪扔给战绩最差的队友。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "闪光自闭症",
+    "description": "每次看到敌人之前，必须先给自己脚下来一颗闪光弹，致盲结束后才能对掏。",
+    "weight": 7,
+    "is_active": 1
+  },
+  {
+    "name": "地雷阵",
+    "description": "无论什么局，所有人第一秒必须先往脚下扔一颗高爆手雷，炸掉几十血再出门。",
+    "weight": 6,
+    "is_active": 1
+  },
+  {
+    "name": "反向驾驶",
+    "description": "W键与S键互换。控制台：bind w +back; bind s +forward",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "脑路漂移",
+    "description": "A键与D键互换。控制台：bind a +moveright; bind d +moveleft",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "颠倒乾坤",
+    "description": "空格(跳)与Ctrl(蹲)互换。控制台：bind space +duck; bind ctrl +jump",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "强制检视",
+    "description": "将射击键(Mouse1)同时绑定检视。控制台：bind mouse1 \"+attack; -lookatweapon\"",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "盲打模式",
+    "description": "所有人关闭准星，全凭感觉。控制台：crosshair 0",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "深夜派对",
+    "description": "游戏亮度调至最低，全图伸手不见五指。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "死寂之地",
+    "description": "所有人音量调至最低（或静音）。体验绝对静谧。",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "路人视角",
+    "description": "必须切换到“第三人称”视角（若服务器允许）。控制台：thirdperson",
+    "weight": 5,
+    "is_active": 1
+  },
+  {
+    "name": "整局闭眼",
+    "description": "整局游戏闭眼进行，全凭队友语音指挥。",
+    "weight": 10,
+    "is_active": 1
+  }
+]

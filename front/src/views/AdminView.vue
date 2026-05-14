@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { allRules, fetchAllRules, saveRule, removeRule, currentView } from '../composables/useGame'
+import { allRules, fetchAllRules, saveRule, removeRule, currentView, importRules, clearRules } from '../composables/useGame'
 
 const editingRule = ref(null)
 const showModal = ref(false)
@@ -43,6 +43,55 @@ function confirmDelete() {
 function handleBack() {
   currentView.value = 'home'
 }
+
+// ── 导入导出 ──
+
+function handleExport() {
+  const dataStr = JSON.stringify(allRules.value, null, 2)
+  const blob = new Blob([dataStr], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `cs_rules_export_${new Date().toISOString().slice(0, 10)}.json`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+const fileInput = ref(null)
+const showImportModal = ref(false)
+const pendingRules = ref([])
+
+function triggerImport() {
+  fileInput.value.click()
+}
+
+async function handleFileImport(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  const text = await file.text()
+  try {
+    const rules = JSON.parse(text)
+    if (Array.isArray(rules)) {
+      pendingRules.value = rules
+      showImportModal.value = true
+    } else {
+      alert('无效的 JSON 格式：应为规则数组')
+    }
+  } catch (err) {
+    alert('文件解析失败，请检查 JSON 格式')
+  }
+  e.target.value = '' // reset
+}
+
+async function startImport(mode) {
+  const ok = await importRules(pendingRules.value, mode)
+  if (ok) {
+    showImportModal.value = false
+    pendingRules.value = []
+  } else {
+    alert('导入失败')
+  }
+}
 </script>
 
 <template>
@@ -50,12 +99,25 @@ function handleBack() {
     <div class="w-full max-w-6xl relative z-10">
       <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
         <div class="flex items-center gap-4">
-          <button @click="handleBack" class="material-symbols-outlined text-primary hover:scale-110 transition-transform">arrow_back</button>
+          <button @click="handleBack"
+            class="material-symbols-outlined text-primary hover:scale-110 transition-transform">arrow_back</button>
           <h1 class="font-display text-3xl font-black tracking-tighter uppercase">Rules Management</h1>
         </div>
-        <button @click="openAdd" class="bg-primary text-on-primary px-6 py-2 chamfer-clip font-bold uppercase text-sm hover:brightness-110 transition-all flex items-center gap-2">
-          <span class="material-symbols-outlined text-sm">add</span> Add Rule
-        </button>
+        <div class="flex items-center gap-4">
+          <input type="file" ref="fileInput" class="hidden" accept=".json" @change="handleFileImport" />
+          <button @click="handleExport"
+            class="px-4 py-2 border border-white/10 text-outline hover:text-primary hover:border-primary/40 chamfer-clip-sm text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">download</span> Export
+          </button>
+          <button @click="triggerImport"
+            class="px-4 py-2 border border-white/10 text-outline hover:text-primary hover:border-primary/40 chamfer-clip-sm text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">upload</span> Import
+          </button>
+          <button @click="openAdd"
+            class="bg-primary text-on-primary px-6 py-2 chamfer-clip font-bold uppercase text-sm hover:brightness-110 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">add</span> Add Rule
+          </button>
+        </div>
       </header>
 
       <div class="grid grid-cols-1 gap-4">
@@ -129,6 +191,31 @@ function handleBack() {
         <div class="flex flex-col gap-3">
           <button @click="confirmDelete" class="w-full py-4 bg-red-500 text-white font-bold uppercase tracking-widest chamfer-clip hover:bg-red-600 transition-all">Confirm Delete</button>
           <button @click="showDeleteModal = false" class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Mode Modal -->
+    <div v-if="showImportModal" class="modal-overlay" @click.self="showImportModal = false">
+      <div
+        class="modal-content w-full max-sm p-8 bg-surface-container border border-primary/30 chamfer-clip animate-[slideUp_0.2s_ease-out] text-center">
+        <div
+          class="w-16 h-16 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span class="material-symbols-outlined text-primary text-3xl">upload_file</span>
+        </div>
+        <h3 class="text-xl font-bold text-text-primary mb-2 uppercase">Ready to Import</h3>
+        <p class="text-sm text-text-secondary mb-8">检测到 {{ pendingRules.length }} 条规则。请选择导入方式：</p>
+        <div class="flex flex-col gap-3">
+          <button @click="startImport('append')"
+            class="w-full py-4 bg-primary text-on-primary font-bold uppercase tracking-widest chamfer-clip hover:brightness-110 transition-all">
+            追加导入 (Append)
+          </button>
+          <button @click="startImport('overwrite')"
+            class="w-full py-4 border border-red-500/50 text-red-500 font-bold uppercase tracking-widest chamfer-clip hover:bg-red-500/10 transition-all">
+            覆盖导入 (Overwrite)
+          </button>
+          <button @click="showImportModal = false"
+            class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">Cancel</button>
         </div>
       </div>
     </div>

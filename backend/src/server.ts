@@ -6,7 +6,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { initDatabase, getAllRules, addRule, updateRule, deleteRule } from './db';
+import { initDatabase, getAllRules, addRule, updateRule, deleteRule, clearAllRules, bulkAddRules } from './db';
 import * as rooms from './rooms';
 import { startVote, submitVote } from './vote';
 import { stopVoteAndSpin } from './spin';
@@ -203,6 +203,29 @@ io.on('connection', (socket) => {
       return;
     }
     deleteRule(id);
+    if (typeof callback === 'function') callback({ success: true });
+  });
+
+  socket.on('admin_clear_rules', (password, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    clearAllRules();
+    if (typeof callback === 'function') callback({ success: true });
+  });
+
+  socket.on('admin_import_rules', ({ password, rules, mode }, callback) => {
+    if (password !== ADMIN_PASSWORD) {
+      if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
+      return;
+    }
+    
+    if (mode === 'overwrite') {
+      clearAllRules();
+    }
+    
+    bulkAddRules(rules);
     if (typeof callback === 'function') callback({ success: true });
   });
 });

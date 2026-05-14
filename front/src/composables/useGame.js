@@ -136,6 +136,32 @@ export function removeRule(id) {
   });
 }
 
+export function importRules(rules, mode = 'append') {
+  return new Promise((resolve) => {
+    socket.emit('admin_import_rules', { password: adminPassword.value, rules, mode }, (res) => {
+      if (res.success) {
+        fetchAllRules();
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
+}
+
+export function clearRules() {
+  return new Promise((resolve) => {
+    socket.emit('admin_clear_rules', adminPassword.value, (res) => {
+      if (res.success) {
+        fetchAllRules();
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
+}
+
 // ── Socket 事件 ──
 
 function updateRoomState(room) {

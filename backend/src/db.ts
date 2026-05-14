@@ -107,6 +107,24 @@ export function deleteRule(id: number): boolean {
   return info.changes > 0;
 }
 
+/** 清空所有规则 */
+export function clearAllRules(): void {
+  db.prepare('DELETE FROM rules').run();
+  // 重置自增 ID
+  db.prepare("DELETE FROM sqlite_sequence WHERE name = 'rules'").run();
+}
+
+/** 批量添加规则 */
+export function bulkAddRules(rules: any[]): void {
+  const insert = db.prepare('INSERT INTO rules (name, description, weight, is_active) VALUES (?, ?, ?, ?)');
+  const transaction = db.transaction((data: any[]) => {
+    for (const rule of data) {
+      insert.run(rule.name, rule.description, rule.weight || 5, rule.is_active ?? 1);
+    }
+  });
+  transaction(rules);
+}
+
 /** 获取数据库实例（供高级用途） */
 export function getDb(): Database.Database {
   return db;
