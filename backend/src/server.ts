@@ -12,7 +12,7 @@ import { startVote, submitVote } from './vote';
 import { stopVoteAndSpin } from './spin';
 import { logger } from './logger';
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const DISCONNECT_TIMEOUT = 60 * 1000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin888';
 
@@ -61,8 +61,8 @@ io.on('connection', (socket) => {
   socket.on('take_seat', ({ targetIdx }) => {
     const roomId = rooms.findRoomBySocket(socket.id);
     const room = rooms.getRoom(roomId || '');
-    const player = room?.players.find(p => p && p.socketId === socket.id) || 
-                   room?.spectators.find(p => p.socketId === socket.id);
+    const player = room?.players.find(p => p && p.socketId === socket.id) ||
+      room?.spectators.find(p => p.socketId === socket.id);
 
     if (roomId && player && rooms.takeSeat(roomId, player.token, targetIdx)) {
       logger.info('Room', `玩家 ${player.playerName} 上座成功: ${targetIdx}`);
@@ -220,11 +220,11 @@ io.on('connection', (socket) => {
       if (typeof callback === 'function') callback({ success: false, error: '权限不足' });
       return;
     }
-    
+
     if (mode === 'overwrite') {
       clearAllRules();
     }
-    
+
     bulkAddRules(rules);
     if (typeof callback === 'function') callback({ success: true });
   });
