@@ -3,10 +3,15 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   roomId, players, spectators, isHost, roomStatus,
-  startVote, takeSeat, leaveSeat, isMe, destroyRoom,
+  startVote, takeSeat, leaveSeat, isMe, destroyRoom, leaveRoom,
   voteOptions, selectedOption, hasVoted, totalVotes,
-  submitVote, stopVoteAndSpin, spinData, showWinner, resetRoom, adminLogin
+  submitVote, stopVoteAndSpin, spinData, showWinner, resetRoom, adminLogin,
+  isImposter, imposterResult, imposterVotesTotal,
+  assignImposters, startImposterVote, submitImposterVote, endImposterVote,
+  gameMode, imposterCount, hasImposterVoted, selectedImposterTargets,
+  imposterVotes
 } from '../composables/useGame'
+import { socket } from '../composables/socket'
 
 const { t } = useI18n()
 
@@ -17,7 +22,12 @@ const sectorColors = ['rgba(164,230,255,0.3)', 'rgba(164,230,255,0.12)', 'rgba(1
 
 const isVoting = () => roomStatus.value === 'VOTING'
 const isSpinning = () => roomStatus.value === 'SPINNING' || roomStatus.value === 'RESULT'
-const isCenterMode = () => isVoting() || isSpinning()
+const isImposterVoting = () => roomStatus.value === 'IMPOSTER_VOTING'
+const isImposterResult = () => roomStatus.value === 'IMPOSTER_RESULT'
+const isImposterAssigned = () => roomStatus.value === 'IMPOSTER_ASSIGNED'
+const isCenterMode = () => isVoting() || isSpinning() || isImposterVoting() || isImposterResult() || isImposterAssigned()
+
+const isMeSeated = computed(() => players.value && players.value.some(p => p !== null && isMe(p)))
 
 const wheelRotation = ref(0)
 const wheelAnimating = ref(false)
@@ -69,6 +79,25 @@ function handleVote(id) { if (!hasVoted.value) submitVote(id) }
 function getTotalPlayers() {
   return Math.max(((players.value || []).filter(p => p !== null).length) + ((spectators.value || []).length), 1)
 }
+function handleImposterVote(targetToken) {
+  if (hasImposterVoted.value) return;
+  const idx = selectedImposterTargets.value.indexOf(targetToken);
+  if (idx !== -1) {
+    selectedImposterTargets.value.splice(idx, 1);
+  } else {
+    if (selectedImposterTargets.value.length < imposterCount.value) {
+      selectedImposterTargets.value.push(targetToken);
+    }
+  }
+}
+
+function submitImposterVotes() {
+  submitImposterVote(selectedImposterTargets.value);
+}
+
+function hasPlayerImposterVoted(token) {
+  return imposterVotes.value.some(v => v.voter === token)
+}
 
 async function handleAdminEntry() {
   showAdminModal.value = true
@@ -103,6 +132,10 @@ async function handleAdminLogin() {
           class="px-3 py-1 bg-red-500/10 border border-red-500/30 chamfer-clip-sm font-mono text-[10px] text-red-500 uppercase hover:bg-red-500 hover:text-white transition-all">
           {{ $t('common.destroyRoom') }}
         </button>
+        <button v-else @click="leaveRoom"
+          class="px-3 py-1 bg-white/10 border border-white/30 chamfer-clip-sm font-mono text-[10px] text-white uppercase hover:bg-white/20 transition-all">
+          离开房间
+        </button>
       </div>
     </header>
 
@@ -110,13 +143,18 @@ async function handleAdminLogin() {
       <!-- Title -->
       <div class="text-center mb-10 relative z-10">
         <p class="font-mono text-[10px] text-text-secondary tracking-[0.6em] mb-2 uppercase opacity-60">
-          {{ isSpinning() ? 'DETERMINING SYSTEM PARAMETERS' : isVoting() ? $t('voting.title') :
+          {{ isSpinning() ? 'DETERMINING SYSTEM PARAMETERS' : isVoting() ? $t('voting.title') : isImposterVoting() ? 'IMPOSTER HUNT' :
             $t('lobby.tacticalDeployment') }}
         </p>
         <h1 class="font-display font-black text-primary uppercase transition-all duration-500"
           :class="isCenterMode() ? 'text-3xl md:text-5xl tracking-tight' : 'text-5xl md:text-7xl tracking-[0.1em]'">
-          {{ isSpinning() ? $t('roulette.title') : isVoting() ? $t('voting.title') : $t('lobby.title') }}
+          {{ isSpinning() ? $t('roulette.title') : isVoting() ? $t('voting.title') : isImposterVoting() ? '抓内鬼投票' : $t('lobby.title') }}
         </h1>
+        <div v-if="(isImposterAssigned() || isImposterVoting()) && isMeSeated" class="mt-4 px-6 py-2 border-2 rounded-full inline-block"
+          :class="isImposter ? 'bg-red-600/30 border-red-500 animate-pulse' : 'bg-green-600/30 border-green-500'">
+          <span v-if="isImposter" class="font-bold text-red-100 uppercase tracking-widest text-lg shadow-black drop-shadow-md">⚠️ 你是内鬼 ⚠️</span>
+          <span v-else class="font-bold text-green-100 uppercase tracking-widest text-lg shadow-black drop-shadow-md">🛡️ 你是平民 🛡️</span>
+        </div>
       </div>
 
       <!-- Core Layout -->
@@ -148,6 +186,14 @@ async function handleAdminLogin() {
                 <div v-if="isVoting() && hasVoted && isMe(players[idx])"
                   class="bg-primary/20 text-primary text-[8px] px-1.5 py-0.5 border border-primary/30 font-bold shrink-0">
                   READY</div>
+                <div v-if="isImposterVoting() && hasPlayerImposterVoted(players[idx].token)"
+                  class="bg-red-500/20 text-red-500 text-[8px] px-1.5 py-0.5 border border-red-500/40 font-bold shrink-0">
+                  已投票</div>
+                <button v-if="isImposterVoting() && !isMe(players[idx]) && (players.findIndex(p => p && p.socketId === socket.id) < 5) && !hasImposterVoted" @click.stop="handleImposterVote(players[idx].token)"
+                  class="px-2 py-1 border font-mono text-[9px] uppercase chamfer-clip-sm transition-all shrink-0"
+                  :class="selectedImposterTargets.includes(players[idx].token) ? 'bg-red-500 text-white border-red-500' : 'bg-red-500/20 text-red-500 border-red-500/40 hover:bg-red-500 hover:text-white'">
+                  {{ selectedImposterTargets.includes(players[idx].token) ? '已选' : '投票' }}
+                </button>
                 <button v-if="!isCenterMode() && isMe(players[idx])" @click.stop="leaveSeat"
                   class="px-2 py-1 bg-red-500/20 border border-red-500/40 text-red-500 font-mono text-[9px] uppercase chamfer-clip-sm hover:bg-red-500 hover:text-white transition-all shrink-0">{{
                     $t('lobby.leave') }}</button>
@@ -283,6 +329,93 @@ async function handleAdminLogin() {
           </Transition>
         </section>
 
+        <!-- === CENTER: IMPOSTER ASSIGNED === -->
+        <section v-if="isImposterAssigned()" class="col-span-8 flex flex-col items-center justify-center">
+          <div class="w-full max-w-lg border border-red-500/30 bg-black/80 p-8 text-center backdrop-blur-sm shadow-[0_0_20px_rgba(255,0,0,0.1)]">
+            <h2 class="font-display text-3xl font-black text-red-500 mb-4 uppercase">身份已分配</h2>
+            <p class="text-text-secondary text-lg mb-6">所有玩家请确认自己的身份。<br>上方会显示你的具体身份提示。</p>
+            <button v-if="isHost" @click="startImposterVote"
+              class="w-full bg-red-600 text-white font-display font-bold py-4 chamfer-clip uppercase text-lg tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,0,0,0.3)]">
+              🔥 开始投票
+            </button>
+            <div v-else class="py-3 border border-white/10 font-mono text-[10px] text-outline uppercase">等待房主开始投票...</div>
+          </div>
+        </section>
+
+        <!-- === CENTER: IMPOSTER VOTING === -->
+        <section v-if="isImposterVoting()" class="col-span-8 flex flex-col items-center">
+          <div class="vs-divider py-6"><span class="font-display text-3xl italic font-black text-white/10 tracking-tighter">VS</span></div>
+          <p class="text-text-primary text-lg mb-6">请在左右两侧选择你要投出的队友 (共 {{ imposterCount }} 票)</p>
+          
+          <div v-if="!hasImposterVoted" class="w-full max-w-md flex flex-col items-center mb-6">
+            <p class="text-text-secondary text-sm mb-4">已选目标: {{ selectedImposterTargets.length }} / {{ imposterCount }}</p>
+            <button @click="submitImposterVotes" :disabled="selectedImposterTargets.length === 0"
+              class="w-full bg-red-600 text-white font-display font-bold py-3 px-10 flex items-center justify-center gap-3 chamfer-clip hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,0,0,0.3)] uppercase text-sm tracking-widest disabled:opacity-50 disabled:pointer-events-none">
+              <span class="material-symbols-outlined text-lg">how_to_vote</span>确认提交选票
+            </button>
+          </div>
+          <div v-else class="w-full max-w-md text-center py-4 border border-red-500/30 bg-red-500/10 mb-6 font-mono text-red-400">
+            你已完成投票，等待其他玩家...
+          </div>
+
+          <div class="mt-4 w-full max-w-2xl flex flex-col items-center gap-6">
+            <div class="flex-1 w-full">
+              <div class="flex justify-between items-end mb-2">
+                <span class="font-mono text-[10px] text-primary uppercase tracking-[0.1em]">总投票进度</span>
+                <span class="font-mono text-[11px] text-text-primary">{{ imposterVotesTotal }} / {{ players.filter(p => p !== null).length }}</span>
+              </div>
+              <div class="h-1.5 w-full bg-white/5 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-red-500 to-red-400 transition-all duration-500 shadow-[0_0_8px_rgba(255,0,0,0.4)]"
+                  :style="{ width: `${(imposterVotesTotal / (players.filter(p => p !== null).length || 1)) * 100}%` }"></div>
+              </div>
+            </div>
+            
+            <div class="w-full mt-2 text-left">
+              <span class="font-mono text-[10px] text-outline uppercase">还未投票的玩家:</span>
+              <div class="flex flex-wrap gap-2 mt-2">
+                <span v-for="p in players.filter(p => p !== null && !hasPlayerImposterVoted(p.token))" :key="p.token"
+                  class="text-[10px] px-2 py-1 bg-white/5 border border-white/10 text-white/60">
+                  {{ p.playerName }}
+                </span>
+                <span v-if="players.filter(p => p !== null && !hasPlayerImposterVoted(p.token)).length === 0" class="text-[10px] text-green-400">
+                  所有人已完成投票
+                </span>
+              </div>
+            </div>
+
+            <button v-if="isHost" @click="endImposterVote"
+              class="w-full bg-red-600 text-white font-display font-bold py-3 px-10 flex items-center justify-center gap-3 chamfer-clip hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,0,0,0.3)] uppercase text-sm tracking-widest mt-4">
+              <span class="material-symbols-outlined text-lg">gavel</span>结束投票并揭晓
+            </button>
+          </div>
+        </section>
+
+        <!-- === CENTER: IMPOSTER RESULT === -->
+        <section v-if="isImposterResult()" class="col-span-8 flex flex-col items-center">
+          <div class="w-full max-w-lg border border-red-500/50 bg-black/80 p-8 text-center backdrop-blur-sm shadow-[0_0_40px_rgba(255,0,0,0.2)]">
+            <h2 class="text-4xl mb-4 font-black text-red-500">揭晓时刻</h2>
+            <div v-if="imposterResult">
+              <p class="text-lg text-white mb-2">被投出的玩家:</p>
+              <div class="flex justify-center gap-4 mb-6">
+                <div v-for="token in imposterResult.votedOut" :key="token" class="px-4 py-2 bg-white/10 rounded border border-white/20 text-white font-bold">
+                  {{ players.find(p => p && p.token === token)?.playerName || '没人' }}
+                </div>
+              </div>
+              <p class="text-lg text-white mb-2">真实的内鬼:</p>
+              <div class="flex justify-center gap-4 mb-8">
+                <div v-for="token in imposterResult.realImposters" :key="token" class="px-4 py-2 bg-red-500/20 rounded border border-red-500 text-red-500 font-bold">
+                  {{ players.find(p => p && p.token === token)?.playerName || '未知' }}
+                </div>
+              </div>
+            </div>
+            <button v-if="isHost" @click="resetRoom"
+              class="w-full bg-primary text-on-primary font-display font-bold py-3 chamfer-clip uppercase text-sm tracking-widest hover:brightness-110 active:scale-95 transition-all">
+              🔄 返回大厅
+            </button>
+            <div v-else class="py-3 border border-white/10 font-mono text-[10px] text-outline uppercase">等待房主返回大厅...</div>
+          </div>
+        </section>
+
         <!-- VS (WAITING only) -->
         <div v-if="!isCenterMode()"
           class="hidden md:flex flex-col items-center justify-center gap-4 opacity-20 self-center">
@@ -315,6 +448,14 @@ async function handleAdminLogin() {
                 <div v-if="isVoting() && hasVoted && isMe(players[idx])"
                   class="bg-secondary/20 text-secondary text-[8px] px-1.5 py-0.5 border border-secondary/30 font-bold shrink-0">
                   READY</div>
+                <div v-if="isImposterVoting() && hasPlayerImposterVoted(players[idx].token)"
+                  class="bg-red-500/20 text-red-500 text-[8px] px-1.5 py-0.5 border border-red-500/40 font-bold shrink-0">
+                  已投票</div>
+                <button v-if="isImposterVoting() && !isMe(players[idx]) && (players.findIndex(p => p && p.socketId === socket.id) >= 5) && !hasImposterVoted" @click.stop="handleImposterVote(players[idx].token)"
+                  class="px-2 py-1 border font-mono text-[9px] uppercase chamfer-clip-sm transition-all shrink-0"
+                  :class="selectedImposterTargets.includes(players[idx].token) ? 'bg-red-500 text-white border-red-500' : 'bg-red-500/20 text-red-500 border-red-500/40 hover:bg-red-500 hover:text-white'">
+                  {{ selectedImposterTargets.includes(players[idx].token) ? '已选' : '投票' }}
+                </button>
                 <button v-if="!isCenterMode() && isMe(players[idx])" @click.stop="leaveSeat"
                   class="px-2 py-1 bg-red-500/20 border border-red-500/40 text-red-500 font-mono text-[9px] uppercase chamfer-clip-sm hover:bg-red-500 hover:text-white transition-all shrink-0">{{
                     $t('lobby.leave') }}</button>
@@ -357,11 +498,18 @@ async function handleAdminLogin() {
 
       <!-- Start button (WAITING) -->
       <div v-if="!isCenterMode()" class="mt-16 pb-12 text-center relative z-10 w-full max-w-lg">
-        <button v-if="isHost"
-          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-5 text-xl uppercase font-black shadow-[0_0_40px_rgba(164,230,255,0.2)]"
-          @click="startVote">
-          🎲 {{ $t('lobby.startOperation') }}
-        </button>
+        <template v-if="isHost">
+          <button v-if="gameMode === 'ROULETTE'"
+            class="w-full btn-base bg-primary text-on-primary chamfer-clip py-5 text-xl uppercase font-black shadow-[0_0_40px_rgba(164,230,255,0.2)]"
+            @click="startVote">
+            🎲 {{ $t('lobby.startOperation') }}
+          </button>
+          <button v-if="gameMode === 'IMPOSTER'"
+            class="w-full btn-base bg-red-600 text-white chamfer-clip py-5 text-xl uppercase font-black shadow-[0_0_40px_rgba(255,0,0,0.2)]"
+            @click="assignImposters">
+            😈 开始游戏
+          </button>
+        </template>
         <div v-else
           class="p-5 bg-white/5 border border-white/10 chamfer-clip font-mono text-xs text-primary uppercase tracking-[0.2em]">
           {{ $t('lobby.standby') }}</div>
@@ -379,7 +527,7 @@ async function handleAdminLogin() {
     <!-- Admin Auth Modal -->
     <div v-if="showAdminModal" class="modal-overlay" @click.self="showAdminModal = false">
       <div
-        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-primary">security</span>
           <h2 class="font-display text-2xl font-bold text-primary uppercase">Authorization</h2>

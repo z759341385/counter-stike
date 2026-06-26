@@ -149,7 +149,7 @@ async function startImport(mode) {
 
     <!-- Edit Modal -->
     <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
-      <div class="modal-content w-full max-lg p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+      <div class="modal-content w-[95%] max-w-[900px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <h2 class="font-display text-2xl font-bold text-primary mb-8 uppercase">{{ editingRule.id ? 'Edit Rule' : 'New Rule' }}</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -182,7 +182,7 @@ async function startImport(mode) {
 
     <!-- Delete Confirm Modal -->
     <div v-if="showDeleteModal" class="modal-overlay" @click.self="showDeleteModal = false">
-      <div class="modal-content w-full max-xs p-8 bg-surface-container border border-red-500/30 chamfer-clip animate-[slideUp_0.2s_ease-out] text-center">
+      <div class="modal-content w-[90%] max-w-[360px] p-8 bg-surface-container border border-red-500/30 chamfer-clip animate-[slideUp_0.2s_ease-out] text-center">
         <div class="w-16 h-16 bg-red-500/20 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-6">
           <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
         </div>
@@ -198,7 +198,7 @@ async function startImport(mode) {
     <!-- Import Mode Modal -->
     <div v-if="showImportModal" class="modal-overlay" @click.self="showImportModal = false">
       <div
-        class="modal-content w-full max-sm p-8 bg-surface-container border border-primary/30 chamfer-clip animate-[slideUp_0.2s_ease-out] text-center">
+        class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-primary/30 chamfer-clip animate-[slideUp_0.2s_ease-out] text-center">
         <div
           class="w-16 h-16 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
           <span class="material-symbols-outlined text-primary text-3xl">upload_file</span>

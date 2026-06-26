@@ -17,18 +17,25 @@ export interface VoteOption {
 }
 
 /** 房间状态 */
-export type RoomStatus = 'WAITING' | 'VOTING' | 'SPINNING' | 'RESULT';
+export type RoomStatus = 'WAITING' | 'VOTING' | 'SPINNING' | 'RESULT' | 'IMPOSTER_ASSIGNED' | 'IMPOSTER_VOTING' | 'IMPOSTER_RESULT';
+
+/** 游戏模式 */
+export type GameMode = 'ROULETTE' | 'IMPOSTER';
 
 /** 房间完整状态 */
 export interface RoomState {
   roomId: string;
   players: (Player | null)[]; // 10 个固定席位 (0-4 Team A, 5-9 Team B)
   spectators: Player[];       // 观战区玩家
+  gameMode: GameMode;         // 游戏模式
   status: RoomStatus;
   voteOptions: VoteOption[];
   votes: Map<string, number>;
   lastSpinResult?: any;
   usedRuleIds: number[];
+  imposterCount: number;
+  imposters: string[];
+  imposterVotes: Map<string, string[]>; // token -> targetTokens[]
 }
 
 const rooms = new Map<string, RoomState>();
@@ -47,7 +54,7 @@ function generateToken(): string {
 }
 
 /** 创建房间 */
-export function createRoom(hostSocketId: string, hostName: string): { roomId: string; token: string } {
+export function createRoom(hostSocketId: string, hostName: string, gameMode: GameMode = 'ROULETTE', imposterCount: number = 1): { roomId: string; token: string } {
   const roomId = generateRoomId();
   const token = generateToken();
   
@@ -55,10 +62,14 @@ export function createRoom(hostSocketId: string, hostName: string): { roomId: st
     roomId,
     players: new Array(10).fill(null),
     spectators: [],
+    gameMode,
     status: 'WAITING',
     voteOptions: [],
     votes: new Map(),
     usedRuleIds: [],
+    imposterCount,
+    imposters: [],
+    imposterVotes: new Map(),
   };
 
   room.players[0] = { socketId: hostSocketId, token, playerName: hostName, isHost: true, connected: true };
@@ -218,9 +229,11 @@ export function getRoom(roomId: string) {
 export function getRoomData(roomId: string) {
   const room = rooms.get(roomId);
   if (!room) return null;
+  const { imposters, ...roomDataWithoutImposters } = room;
   return {
-    ...room,
+    ...roomDataWithoutImposters,
     votes: Array.from(room.votes.keys()), // 将 Map 转换为已投票者的 token 数组
+    imposterVotes: Array.from(room.imposterVotes.entries()).map(([voter, targets]) => ({ voter, targets })), // 转换复杂的Map
   };
 }
 export function getPlayerList(roomId: string) { return rooms.get(roomId)?.players ?? []; }

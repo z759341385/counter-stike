@@ -10,6 +10,7 @@ import { initDatabase, getAllRules, addRule, updateRule, deleteRule, clearAllRul
 import * as rooms from './rooms';
 import { startVote, submitVote } from './vote';
 import { stopVoteAndSpin } from './spin';
+import { assignImposters, startImposterVote, submitImposterVote, endImposterVote } from './imposter';
 import { logger } from './logger';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
@@ -39,8 +40,10 @@ io.on('connection', (socket) => {
     }
   }
 
-  socket.on('create_room', ({ playerName }, callback) => {
-    const { roomId, token } = rooms.createRoom(socket.id, playerName);
+  socket.on('create_room', ({ playerName, gameMode, imposterCount }, callback) => {
+    const count = typeof imposterCount === 'number' ? imposterCount : 1;
+    const mode = gameMode === 'IMPOSTER' ? 'IMPOSTER' : 'ROULETTE';
+    const { roomId, token } = rooms.createRoom(socket.id, playerName, mode, count);
     socket.join(roomId);
     if (typeof callback === 'function') callback({ success: true, roomId, token });
     io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
@@ -113,6 +116,60 @@ io.on('connection', (socket) => {
       const room = rooms.getRoom(roomId);
       if (room) room.lastSpinResult = result;
       io.to(roomId).emit('spin_wheel', result);
+    }
+  });
+
+  // 内鬼模式相关事件
+  socket.on('assign_imposters', ({ roomId }, callback) => {
+    const result = assignImposters(roomId, socket.id);
+    if (typeof result === 'string') {
+      if (typeof callback === 'function') callback({ success: false, error: result });
+    } else {
+      if (typeof callback === 'function') callback({ success: true });
+      const impostersTokens = result;
+      // 给对应的玩家私信身份
+      const room = rooms.getRoom(roomId);
+      if (room) {
+        for (const token of impostersTokens) {
+          const player = room.players.find(p => p && p.token === token);
+          if (player && player.socketId) {
+            io.to(player.socketId).emit('you_are_imposter');
+          }
+        }
+      }
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
+    }
+  });
+
+  socket.on('start_imposter_vote', ({ roomId }, callback) => {
+    const result = startImposterVote(roomId, socket.id);
+    if (typeof result === 'string') {
+      if (typeof callback === 'function') callback({ success: false, error: result });
+    } else {
+      if (typeof callback === 'function') callback({ success: true });
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
+    }
+  });
+
+  socket.on('submit_imposter_vote', ({ roomId, targetTokens }, callback) => {
+    const result = submitImposterVote(roomId, socket.id, targetTokens);
+    if (typeof result === 'string') {
+      if (typeof callback === 'function') callback({ success: false, error: result });
+    } else {
+      if (typeof callback === 'function') callback({ success: true });
+      io.to(roomId).emit('imposter_vote_progress', { totalVotes: result.totalVotes });
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
+    }
+  });
+
+  socket.on('end_imposter_vote', ({ roomId }, callback) => {
+    const result = endImposterVote(roomId, socket.id);
+    if (typeof result === 'string') {
+      if (typeof callback === 'function') callback({ success: false, error: result });
+    } else {
+      if (typeof callback === 'function') callback({ success: true });
+      io.to(roomId).emit('imposter_result', result);
+      io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
     }
   });
 

@@ -10,9 +10,11 @@ const { t } = useI18n()
 
 const showCreateModal = ref(false)
 const showJoinModal = ref(false)
-const nameInput = ref('')
+const nameInput = ref(localStorage.getItem('cs_player_name') || '')
+const gameMode = ref('ROULETTE')
+const imposterCount = ref(1)
 const roomIdInput = ref('')
-const joinNameInput = ref('')
+const joinNameInput = ref(localStorage.getItem('cs_player_name') || '')
 const showAdminModal = ref(false)
 const adminPwInput = ref('')
 
@@ -81,12 +83,14 @@ onUnmounted(() => {
 
 function handleCreate() {
   if (!nameInput.value.trim()) return
-  createRoom(nameInput.value.trim())
+  localStorage.setItem('cs_player_name', nameInput.value.trim())
+  createRoom(nameInput.value.trim(), gameMode.value, Number(imposterCount.value))
   showCreateModal.value = false
 }
 
 function handleJoin() {
   if (!roomIdInput.value.trim() || !joinNameInput.value.trim()) return
+  localStorage.setItem('cs_player_name', joinNameInput.value.trim())
   joinRoom(roomIdInput.value.trim(), joinNameInput.value.trim())
   showJoinModal.value = false
 }
@@ -187,12 +191,35 @@ async function handleAdminLogin() {
     <!-- Modals -->
     <div v-if="showCreateModal" class="modal-overlay" @click.self="showCreateModal = false">
       <div
-        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <h2 class="font-display text-2xl font-bold text-primary mb-6 uppercase">{{ $t('home.createRoom') }}</h2>
         <div class="mb-6">
           <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderName') }}</label>
           <input v-model="nameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')" maxlength="20"
             @keyup.enter="handleCreate" />
+        </div>
+        <div class="mb-6">
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">游戏模式</label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 text-white cursor-pointer">
+              <input type="radio" v-model="gameMode" value="ROULETTE" class="accent-primary" />
+              抽卡模式
+            </label>
+            <label class="flex items-center gap-2 text-white cursor-pointer">
+              <input type="radio" v-model="gameMode" value="IMPOSTER" class="accent-primary" />
+              内鬼模式
+            </label>
+          </div>
+        </div>
+        <div v-if="gameMode === 'IMPOSTER'" class="mb-6">
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Imposter Count Per Team (每队内鬼数量)</label>
+          <select v-model="imposterCount" class="input-field chamfer-clip-sm bg-surface-container text-white">
+            <option :value="1">1</option>
+            <option :value="2">2</option>
+            <option :value="3">3</option>
+            <option :value="4">4</option>
+            <option :value="5">5</option>
+          </select>
         </div>
         <button @click="handleCreate"
           class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold">{{ $t('home.initGame') }}</button>
@@ -201,7 +228,7 @@ async function handleAdminLogin() {
 
     <div v-if="showJoinModal" class="modal-overlay" @click.self="showJoinModal = false">
       <div
-        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <h2 class="font-display text-2xl font-bold text-secondary mb-6 uppercase">{{ $t('home.joinRoom') }}</h2>
         <div class="mb-4">
           <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderRoomId') }}</label>
@@ -221,7 +248,7 @@ async function handleAdminLogin() {
 
     <div v-if="showAdminModal" class="modal-overlay" @click.self="showAdminModal = false">
       <div
-        class="modal-content w-full max-sm p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
+        class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-primary">security</span>
           <h2 class="font-display text-2xl font-bold text-primary uppercase">Authorization</h2>

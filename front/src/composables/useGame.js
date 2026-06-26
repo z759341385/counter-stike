@@ -15,6 +15,15 @@ export const showWinner = ref(false)
 export const winningRule = ref(null)
 export const adminPassword = ref('')
 export const allRules = ref([])
+export const gameMode = ref('ROULETTE')
+export const imposterCount = ref(1)
+
+export const isImposter = ref(false)
+export const imposterResult = ref(null)
+export const imposterVotesTotal = ref(0)
+export const hasImposterVoted = ref(false)
+export const selectedImposterTargets = ref([])
+export const imposterVotes = ref([])
 
 export const isHost = computed(() => {
   const token = localStorage.getItem('cs_rule_token');
@@ -39,9 +48,9 @@ export function initGame() {
   if (token) connectSocket();
 }
 
-export function createRoom(name) {
+export function createRoom(name, mode = 'ROULETTE', count = 1) {
   connectSocket();
-  socket.emit('create_room', { playerName: name }, (res) => {
+  socket.emit('create_room', { playerName: name, gameMode: mode, imposterCount: count }, (res) => {
     if (res.success) {
       roomId.value = res.roomId;
       localStorage.setItem('cs_rule_token', res.token);
@@ -98,6 +107,45 @@ export function resetRoom() {
 
 export function destroyRoom() {
   socket.emit('destroy_room', { roomId: roomId.value });
+}
+
+export function leaveRoom() {
+  socket.emit('leave_room', { roomId: roomId.value }, (res) => {
+    if (res && res.success) {
+      localStorage.removeItem('cs_rule_token');
+      currentView.value = 'home';
+      roomId.value = '';
+      players.value = new Array(10).fill(null);
+      spectators.value = [];
+    }
+  });
+}
+
+// ── 内鬼模式方法 ──
+export function assignImposters() {
+  socket.emit('assign_imposters', { roomId: roomId.value }, (res) => {
+    if (!res.success) {
+      errorMsg.value = res.error;
+      setTimeout(() => { errorMsg.value = ''; }, 3000);
+    }
+  });
+}
+
+export function startImposterVote() {
+  socket.emit('start_imposter_vote', { roomId: roomId.value });
+}
+
+export function submitImposterVote(targetTokens) {
+  socket.emit('submit_imposter_vote', { roomId: roomId.value, targetTokens }, (res) => {
+    if (!res.success) {
+      errorMsg.value = res.error;
+      setTimeout(() => { errorMsg.value = ''; }, 3000);
+    }
+  });
+}
+
+export function endImposterVote() {
+  socket.emit('end_imposter_vote', { roomId: roomId.value });
 }
 
 // ── 管理员方法 ──
@@ -176,11 +224,18 @@ function updateRoomState(room) {
     voteOptions.value = [...room.voteOptions];
   }
   roomStatus.value = room.status || 'WAITING';
+  gameMode.value = room.gameMode || 'ROULETTE';
+  imposterCount.value = room.imposterCount || 1;
 
   // 恢复已投票状态
+  const myToken = localStorage.getItem('cs_rule_token');
   if (Array.isArray(room.votes)) {
-    const myToken = localStorage.getItem('cs_rule_token');
     hasVoted.value = room.votes.includes(myToken);
+  }
+  
+  if (Array.isArray(room.imposterVotes)) {
+    imposterVotes.value = room.imposterVotes;
+    hasImposterVoted.value = room.imposterVotes.some(v => v.voter === myToken);
   }
 
   // 恢复轮盘数据
@@ -191,6 +246,15 @@ function updateRoomState(room) {
     if (room.status === 'RESULT') {
       showWinner.value = true;
     }
+  }
+
+  // 重置内鬼状态
+  if (room.status === 'WAITING' || room.status === 'VOTING') {
+    isImposter.value = false;
+    imposterResult.value = null;
+    imposterVotesTotal.value = 0;
+    hasImposterVoted.value = false;
+    selectedImposterTargets.value = [];
   }
 }
 
@@ -238,4 +302,16 @@ socket.on('room_destroyed', () => {
 socket.on('error_msg', (msg) => {
   errorMsg.value = msg;
   setTimeout(() => { errorMsg.value = ''; }, 5000);
+});
+
+socket.on('you_are_imposter', () => {
+  isImposter.value = true;
+});
+
+socket.on('imposter_vote_progress', (data) => {
+  imposterVotesTotal.value = data.totalVotes;
+});
+
+socket.on('imposter_result', (data) => {
+  imposterResult.value = data;
 });

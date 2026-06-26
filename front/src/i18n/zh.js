@@ -23,7 +23,7 @@ export default {
     enterGame: '进入对局',
     geoSync: '地理同步',
     active: '活跃',
-    tactical: '战术终端',
+    tactical: '昵称',
     secure: '加密连接',
   },
   lobby: {
