@@ -268,6 +268,14 @@ socket.on('reconnect_success', ({ roomId: rid, room }) => {
   currentView.value = 'lobby';
 });
 
+socket.on('reconnect_failed', () => {
+  localStorage.removeItem('cs_rule_token');
+  currentView.value = 'home';
+  roomId.value = '';
+  errorMsg.value = '连接已失效，请重新加入房间';
+  setTimeout(() => { errorMsg.value = ''; }, 3000);
+});
+
 socket.on('vote_started', (options) => {
   voteOptions.value = options;
   hasVoted.value = false;

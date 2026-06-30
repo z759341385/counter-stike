@@ -14,7 +14,7 @@ import { assignImposters, startImposterVote, submitImposterVote, endImposterVote
 import { logger } from './logger';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
-const DISCONNECT_TIMEOUT = 60 * 1000;
+const DISCONNECT_TIMEOUT = 60 * 60 * 1000; // 1小时，防止后台挂机掉线
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin888';
 
 const app = express();
@@ -37,6 +37,8 @@ io.on('connection', (socket) => {
       socket.join(result.roomId);
       socket.emit('reconnect_success', { roomId: result.roomId, room: rooms.getRoomData(result.roomId) });
       io.to(result.roomId).emit('room_update', rooms.getRoomData(result.roomId));
+    } else {
+      socket.emit('reconnect_failed');
     }
   }
 

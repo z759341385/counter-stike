@@ -70,3 +70,29 @@ npm run build
 ```bash
 npm run preview
 ```
+
+---
+
+## 3. 游戏服务端集成 (Server Integration)
+
+由于本项目（内战抽卡系统）需要在 CS2 游戏内实现自动化规则执行，我们引入了通过 RCON 协议与游戏服务端通信的测试模块。
+
+### 依赖安装
+项目中使用了 `rcon` 库用于与服务端进行 TCP 通信。如果在本地开发，请确保已在根目录安装该依赖：
+```bash
+npm install rcon
+```
+
+### 本地服务端测试流程
+我们提供了一个单功能测试脚本 `server-integration/test_rcon.js`。它的作用是验证 Node.js 后端是否能成功连接本地测试的 CS2 游戏服务端，并将抽卡获取的规则（例如“西部牛仔”）直接发送到游戏公屏中。
+
+**测试步骤：**
+1. **准备 CS2 服务端**：在本地旧电脑或开发机上启动 CS2 Dedicated Server（专用服务端）。
+2. **开启 RCON**：确保游戏服务端的启动参数或 `server.cfg` 中开启了 RCON 密码，例如包含配置：`+rcon_password your_test_password`。
+3. **配置测试脚本**：打开 `server-integration/test_rcon.js` 文件，将代码顶部的 `cs2ServerIp` 改为您的服务器局域网 IP（如果在同一台电脑测试则保持 `127.0.0.1`），并填入您在第 2 步设置的 RCON 密码。
+4. **执行测试指令**：
+在项目根目录的终端中运行：
+```bash
+node server-integration/test_rcon.js
+```
+> 若配置无误，终端会输出“✅ 成功连接并认证到 CS2 服务器 RCON！”，同时您会在游戏内的左下角聊天框中看到系统下发的内战规则广播。
