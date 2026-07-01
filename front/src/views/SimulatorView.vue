@@ -3,12 +3,12 @@ import { ref, onMounted, computed, nextTick } from 'vue'
 import { currentView } from '../composables/useGame'
 import { crates, inventory, isLoading, prices, cratePrices, loadSimulatorData, unboxCrate, addInventoryItem, clearInventory } from '../composables/useSimulator'
 
-const getItemBasePrice = (itemId) => {
-  if (!prices.value || !prices.value[itemId]) return '0.00';
+const getItemBasePrice = (itemId, isRare = false) => {
+  if (!prices.value || !prices.value[itemId]) return isRare ? '380.00' : '0.50';
   const p = prices.value[itemId];
   if (p['久经沙场'] && p['久经沙场'].price) return p['久经沙场'].price.toFixed(2);
   const anyWear = Object.values(p).find(w => w.price > 0);
-  return anyWear ? anyWear.price.toFixed(2) : '0.00';
+  return anyWear ? anyWear.price.toFixed(2) : (isRare ? '380.00' : '0.50');
 }
 
 onMounted(async () => {
@@ -241,8 +241,7 @@ const rates = [
     </div>
 
     <!-- Right Main Area -->
-    <div class="flex-1 flex flex-col h-screen overflow-y-auto custom-scrollbar bg-[#82817F]"
-      style="background-color: #1a1918;">
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar bg-[#1a1918] pb-12">
 
       <!-- Top Stats Row -->
       <div class="p-6 pb-0 flex gap-4">
@@ -400,7 +399,7 @@ const rates = [
               <span class="text-[10px] text-gray-500 font-bold line-clamp-1 w-full">{{ item.name.split('|')[0] }}</span>
               <span class="text-[11px] font-bold line-clamp-1 w-full mt-0.5" :style="{ color: item.rarity?.color }">{{
                 item.name.split('|')[1] || item.name }}</span>
-              <span class="text-[10px] text-gray-500 font-mono mt-1 w-full">${{ getItemBasePrice(item.id) }}</span>
+              <span class="text-[10px] text-gray-500 font-mono mt-1 w-full">${{ getItemBasePrice(item.id, false) }}</span>
             </div>
           </div>
 
@@ -423,7 +422,7 @@ const rates = [
                   item.name.split('|')[0] }}</span>
                 <span class="text-[11px] font-bold line-clamp-2 w-full mt-0.5" style="color: #ffd700">{{
                   item.name.split('|')[1] || item.name }}{{ item.phase ? ' (' + item.phase + ')' : '' }}</span>
-                <span class="text-[10px] text-gray-500 font-mono mt-1 w-full">${{ getItemBasePrice(item.id) }}</span>
+                <span class="text-[10px] text-gray-500 font-mono mt-1 w-full">${{ getItemBasePrice(item.id, true) }}</span>
               </div>
             </div>
           </div>

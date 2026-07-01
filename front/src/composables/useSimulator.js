@@ -149,7 +149,21 @@ export function unboxCrate(crate) {
   if (prices.value && prices.value[selectedItem.id]) {
     const wearPrices = prices.value[selectedItem.id][wearName] || prices.value[selectedItem.id]['Vanilla'];
     if (wearPrices) {
-      itemPrice = isStatTrak ? wearPrices.st : wearPrices.price;
+      itemPrice = isStatTrak ? (wearPrices.st || 0) : (wearPrices.price || 0);
+    }
+    // Fallback to any valid wear if current wear has 0 price (due to no market listings)
+    if (itemPrice === 0) {
+      const anyWear = Object.values(prices.value[selectedItem.id]).find(w => w && (isStatTrak ? w.st : w.price) > 0);
+      if (anyWear) itemPrice = isStatTrak ? anyWear.st : anyWear.price;
+    }
+  }
+
+  // Fallback for completely missing items (like Vanilla knives)
+  if (itemPrice === 0) {
+    if (isRare) {
+       itemPrice = isStatTrak ? 550.00 : 380.00; // Reasonable fallback for rare missing items
+    } else {
+       itemPrice = 0.50; // Fallback for normal missing items
     }
   }
 
