@@ -4,8 +4,8 @@ import en from './en'
 
 const i18n = createI18n({
   legacy: false, // 使用 Composition API 模式
-  locale: navigator.language.startsWith('zh') ? 'zh' : 'en', // 自动识别
-  fallbackLocale: 'en',
+  locale: 'zh', // 强制使用中文
+  fallbackLocale: 'zh',
   messages: {
     zh,
     en

@@ -1,9 +1,13 @@
 <script setup>
 import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { currentView, initGame } from './composables/useGame'
 import HomeView from './views/HomeView.vue'
 import LobbyView from './views/LobbyView.vue'
 import AdminView from './views/AdminView.vue'
+
+const { locale } = useI18n()
+
 
 onMounted(() => {
   initGame()
@@ -11,6 +15,7 @@ onMounted(() => {
 </script>
 
 <template>
+
   <Transition name="view" mode="out-in">
     <HomeView v-if="currentView === 'home'" key="home" />
     <LobbyView v-else-if="currentView === 'lobby'" key="lobby" />

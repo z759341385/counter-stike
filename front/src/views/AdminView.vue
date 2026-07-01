@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { allRules, fetchAllRules, saveRule, removeRule, currentView, importRules, clearRules } from '../composables/useGame'
+
+const { t } = useI18n()
 
 const editingRule = ref(null)
 const showModal = ref(false)
@@ -75,10 +78,10 @@ async function handleFileImport(e) {
       pendingRules.value = rules
       showImportModal.value = true
     } else {
-      alert('无效的 JSON 格式：应为规则数组')
+      alert(t('admin.invalidJson'))
     }
   } catch (err) {
-    alert('文件解析失败，请检查 JSON 格式')
+    alert(t('admin.parseError'))
   }
   e.target.value = '' // reset
 }
@@ -89,7 +92,7 @@ async function startImport(mode) {
     showImportModal.value = false
     pendingRules.value = []
   } else {
-    alert('导入失败')
+    alert(t('admin.importFailed'))
   }
 }
 </script>
@@ -101,21 +104,21 @@ async function startImport(mode) {
         <div class="flex items-center gap-4">
           <button @click="handleBack"
             class="material-symbols-outlined text-primary hover:scale-110 transition-transform">arrow_back</button>
-          <h1 class="font-display text-3xl font-black tracking-tighter uppercase">Rules Management</h1>
+          <h1 class="font-display text-3xl font-black tracking-tighter uppercase">{{ $t('admin.title') }}</h1>
         </div>
         <div class="flex items-center gap-4">
           <input type="file" ref="fileInput" class="hidden" accept=".json" @change="handleFileImport" />
           <button @click="handleExport"
             class="px-4 py-2 border border-white/10 text-outline hover:text-primary hover:border-primary/40 chamfer-clip-sm text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">download</span> Export
+            <span class="material-symbols-outlined text-sm">download</span> {{ $t('admin.export') }}
           </button>
           <button @click="triggerImport"
             class="px-4 py-2 border border-white/10 text-outline hover:text-primary hover:border-primary/40 chamfer-clip-sm text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">upload</span> Import
+            <span class="material-symbols-outlined text-sm">upload</span> {{ $t('admin.import') }}
           </button>
           <button @click="openAdd"
             class="bg-primary text-on-primary px-6 py-2 chamfer-clip font-bold uppercase text-sm hover:brightness-110 transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">add</span> Add Rule
+            <span class="material-symbols-outlined text-sm">add</span> {{ $t('admin.addRule') }}
           </button>
         </div>
       </header>
@@ -126,8 +129,8 @@ async function startImport(mode) {
           <div class="flex-grow">
             <div class="flex items-center gap-3 mb-2">
               <h3 class="text-xl font-bold text-primary uppercase tracking-tight">{{ rule.name }}</h3>
-              <span v-if="!rule.is_active" class="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-mono border border-red-500/30 uppercase">Disabled</span>
-              <span class="font-mono text-[10px] text-outline px-2 py-0.5 border border-white/10">W: {{ rule.weight }}</span>
+              <span v-if="!rule.is_active" class="px-2 py-0.5 bg-red-500/20 text-red-500 text-[10px] font-mono border border-red-500/30 uppercase">{{ $t('admin.disabled') }}</span>
+              <span class="font-mono text-[10px] text-outline px-2 py-0.5 border border-white/10">{{ $t('admin.weight') }}: {{ rule.weight }}</span>
             </div>
             <p class="text-sm text-text-secondary max-w-2xl">{{ rule.description }}</p>
           </div>
@@ -143,39 +146,39 @@ async function startImport(mode) {
       </div>
 
       <div v-if="allRules.length === 0" class="text-center py-20 opacity-20 font-mono tracking-widest uppercase">
-        No Rules Found
+        {{ $t('admin.noRules') }}
       </div>
     </div>
 
     <!-- Edit Modal -->
     <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
       <div class="modal-content w-[95%] max-w-[900px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
-        <h2 class="font-display text-2xl font-bold text-primary mb-8 uppercase">{{ editingRule.id ? 'Edit Rule' : 'New Rule' }}</h2>
+        <h2 class="font-display text-2xl font-bold text-primary mb-8 uppercase">{{ editingRule.id ? $t('admin.editRule') : $t('admin.newRule') }}</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div class="space-y-6">
             <div>
-              <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Rule Name</label>
-              <input v-model="editingRule.name" class="input-field chamfer-clip-sm" placeholder="e.g. SNIPER ONLY" />
+              <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('admin.ruleName') }}</label>
+              <input v-model="editingRule.name" class="input-field chamfer-clip-sm" placeholder="..." />
             </div>
             <div>
-              <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Weight (1-10)</label>
+              <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('admin.ruleWeight') }}</label>
               <input v-model.number="editingRule.weight" type="number" min="1" max="10" class="input-field chamfer-clip-sm" />
             </div>
             <div class="flex items-center gap-3">
               <input type="checkbox" v-model="editingRule.is_active" :true-value="1" :false-value="0" id="isActive" class="accent-primary" />
-              <label for="isActive" class="font-mono text-[10px] text-outline uppercase tracking-widest cursor-pointer">Active in Roulette</label>
+              <label for="isActive" class="font-mono text-[10px] text-outline uppercase tracking-widest cursor-pointer">{{ $t('admin.activeInRoulette') }}</label>
             </div>
           </div>
           <div>
-            <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Description</label>
-            <textarea v-model="editingRule.description" class="input-field chamfer-clip-sm h-[180px] resize-none py-3" placeholder="Explain the rule in detail..."></textarea>
+            <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('admin.description') }}</label>
+            <textarea v-model="editingRule.description" class="input-field chamfer-clip-sm h-[180px] resize-none py-3" placeholder="..."></textarea>
           </div>
         </div>
 
         <div class="flex gap-4">
-          <button @click="handleSave" class="flex-1 btn-base bg-primary text-on-primary chamfer-clip py-4 font-bold uppercase tracking-widest hover:brightness-110">Save Configuration</button>
-          <button @click="showModal = false" class="px-8 border border-white/10 text-outline chamfer-clip uppercase text-sm hover:bg-white/5">Cancel</button>
+          <button @click="handleSave" class="flex-1 btn-base bg-primary text-on-primary chamfer-clip py-4 font-bold uppercase tracking-widest hover:brightness-110">{{ $t('admin.saveConfig') }}</button>
+          <button @click="showModal = false" class="px-8 border border-white/10 text-outline chamfer-clip uppercase text-sm hover:bg-white/5">{{ $t('admin.cancel') }}</button>
         </div>
       </div>
     </div>
@@ -186,11 +189,11 @@ async function startImport(mode) {
         <div class="w-16 h-16 bg-red-500/20 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-6">
           <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
         </div>
-        <h3 class="text-xl font-bold text-text-primary mb-2 uppercase">Confirm Deletion</h3>
-        <p class="text-sm text-text-secondary mb-8">此操作将永久移除该规则，且不可撤销。你确定要继续吗？</p>
+        <h3 class="text-xl font-bold text-text-primary mb-2 uppercase">{{ $t('admin.confirmDelete') }}</h3>
+        <p class="text-sm text-text-secondary mb-8">{{ $t('admin.deleteWarn') }}</p>
         <div class="flex flex-col gap-3">
-          <button @click="confirmDelete" class="w-full py-4 bg-red-500 text-white font-bold uppercase tracking-widest chamfer-clip hover:bg-red-600 transition-all">Confirm Delete</button>
-          <button @click="showDeleteModal = false" class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">Cancel</button>
+          <button @click="confirmDelete" class="w-full py-4 bg-red-500 text-white font-bold uppercase tracking-widest chamfer-clip hover:bg-red-600 transition-all">{{ $t('admin.btnConfirmDelete') }}</button>
+          <button @click="showDeleteModal = false" class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">{{ $t('admin.cancel') }}</button>
         </div>
       </div>
     </div>
@@ -203,19 +206,19 @@ async function startImport(mode) {
           class="w-16 h-16 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center mx-auto mb-6">
           <span class="material-symbols-outlined text-primary text-3xl">upload_file</span>
         </div>
-        <h3 class="text-xl font-bold text-text-primary mb-2 uppercase">Ready to Import</h3>
-        <p class="text-sm text-text-secondary mb-8">检测到 {{ pendingRules.length }} 条规则。请选择导入方式：</p>
+        <h3 class="text-xl font-bold text-text-primary mb-2 uppercase">{{ $t('admin.readyImport') }}</h3>
+        <p class="text-sm text-text-secondary mb-8">{{ $t('admin.importFound', { count: pendingRules.length }) }}</p>
         <div class="flex flex-col gap-3">
           <button @click="startImport('append')"
             class="w-full py-4 bg-primary text-on-primary font-bold uppercase tracking-widest chamfer-clip hover:brightness-110 transition-all">
-            追加导入 (Append)
+            {{ $t('admin.importAppend') }}
           </button>
           <button @click="startImport('overwrite')"
             class="w-full py-4 border border-red-500/50 text-red-500 font-bold uppercase tracking-widest chamfer-clip hover:bg-red-500/10 transition-all">
-            覆盖导入 (Overwrite)
+            {{ $t('admin.importOverwrite') }}
           </button>
           <button @click="showImportModal = false"
-            class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">Cancel</button>
+            class="w-full py-3 text-outline uppercase font-mono text-xs hover:text-text-primary transition-all">{{ $t('admin.cancel') }}</button>
         </div>
       </div>
     </div>

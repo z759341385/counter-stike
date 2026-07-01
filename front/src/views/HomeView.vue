@@ -105,7 +105,7 @@ async function handleAdminLogin() {
     showAdminModal.value = false
     adminPwInput.value = ''
   } else {
-    alert('密码错误')
+    alert(t('home.passwordError'))
   }
 }
 </script>
@@ -119,7 +119,7 @@ async function handleAdminLogin() {
     <!-- Header -->
     <header
       class="flex justify-between items-center w-full px-8 md:px-16 py-6 fixed top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5">
-      <div @click="handleAdminEntry" class="font-display text-xl md:text-2xl tracking-tighter text-primary font-bold uppercase cursor-pointer select-none active:opacity-50">CS Rule Engine</div>
+      <div @click="handleAdminEntry" class="font-display text-xl md:text-2xl tracking-tighter text-primary font-bold uppercase cursor-pointer select-none active:opacity-50">CS 规则引擎</div>
     </header>
 
     <!-- Main Content -->
@@ -128,7 +128,7 @@ async function handleAdminLogin() {
       <div class="w-full mb-16 animate-[fadeIn_0.8s_ease-out] text-center">
         <h1
           class="font-display text-[48px] sm:text-[72px] md:text-[100px] lg:text-[120px] tracking-tighter leading-[1.1] font-black uppercase mb-12">
-          CS RULE<br class="md:hidden"> ENGINE
+          CS规则<br class="md:hidden">引擎
         </h1>
 
         <div class="flex flex-wrap justify-center gap-6 mt-8">
@@ -165,19 +165,11 @@ async function handleAdminLogin() {
       <div
         class="flex flex-wrap justify-center gap-16 font-mono text-[11px] text-outline/40 tracking-widest animate-[fadeIn_1s_ease-out_0.5s_both]">
         <div class="flex flex-col items-center">
-          <span class="mb-2">SYSTEM STATUS</span>
+          <span class="mb-2">系统状态</span>
           <div class="flex items-center gap-2 text-text-secondary">
             <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></span>
-            <span class="uppercase">Nominal</span>
+            <span class="uppercase">运行正常</span>
           </div>
-        </div>
-        <div class="flex flex-col items-center">
-          <span class="mb-2">ENCRYPTION</span>
-          <span class="text-text-secondary uppercase">AES-256-GCM</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <span class="mb-2">GEO-SYNC</span>
-          <span class="text-text-secondary uppercase">Active</span>
         </div>
       </div>
     </main>
@@ -199,20 +191,20 @@ async function handleAdminLogin() {
             @keyup.enter="handleCreate" />
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">游戏模式</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.gameModeTitle') }}</label>
           <div class="flex gap-4">
             <label class="flex items-center gap-2 text-white cursor-pointer">
               <input type="radio" v-model="gameMode" value="ROULETTE" class="accent-primary" />
-              抽卡模式
+              {{ $t('home.modeRoulette') }}
             </label>
             <label class="flex items-center gap-2 text-white cursor-pointer">
               <input type="radio" v-model="gameMode" value="IMPOSTER" class="accent-primary" />
-              内鬼模式
+              {{ $t('home.modeImposter') }}
             </label>
           </div>
         </div>
         <div v-if="gameMode === 'IMPOSTER'" class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Imposter Count Per Team (每队内鬼数量)</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.imposterCountLabel') }}</label>
           <select v-model="imposterCount" class="input-field chamfer-clip-sm bg-surface-container text-white">
             <option :value="1">1</option>
             <option :value="2">2</option>
@@ -251,24 +243,22 @@ async function handleAdminLogin() {
         class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-primary">security</span>
-          <h2 class="font-display text-2xl font-bold text-primary uppercase">Authorization</h2>
+          <h2 class="font-display text-2xl font-bold text-primary uppercase">{{ $t('home.authTitle') }}</h2>
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Security Access
-            Code</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.authCode') }}</label>
           <input v-model="adminPwInput" type="password" class="input-field chamfer-clip-sm" placeholder="••••••••"
             @keyup.enter="handleAdminLogin" />
         </div>
         <button @click="handleAdminLogin"
-          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold tracking-widest hover:brightness-110">Access
-          Terminal</button>
+          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold tracking-widest hover:brightness-110">{{ $t('home.authAccess') }}</button>
       </div>
     </div>
 
     <Transition name="fade">
       <div v-if="errorMsg"
         class="fixed top-24 right-8 z-[60] px-6 py-3 bg-red-900/80 border border-red-500/50 backdrop-blur-md text-white font-mono text-xs chamfer-clip-sm">
-        [ERROR]: {{ errorMsg }}
+        [{{ $t('home.errorPrefix') }}]: {{ errorMsg }}
       </div>
     </Transition>
   </div>
