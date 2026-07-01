@@ -116,11 +116,7 @@ async function handleAdminLogin() {
     <div class="fixed inset-0 pointer-events-none z-0 dot-pattern opacity-20"></div>
     <canvas ref="canvasRef" class="fixed inset-0 pointer-events-none z-1 opacity-40"></canvas>
 
-    <!-- Header -->
-    <header
-      class="flex justify-between items-center w-full px-8 md:px-16 py-6 fixed top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5">
-      <div @click="handleAdminEntry" class="font-display text-xl md:text-2xl tracking-tighter text-primary font-bold uppercase cursor-pointer select-none active:opacity-50">CS 规则引擎</div>
-    </header>
+
 
     <!-- Main Content -->
     <main class="flex-grow flex flex-col items-center justify-center w-full max-w-6xl px-6 relative z-10 pt-32 pb-20">
@@ -128,7 +124,7 @@ async function handleAdminLogin() {
       <div class="w-full mb-16 animate-[fadeIn_0.8s_ease-out] text-center">
         <h1
           class="font-display text-[48px] sm:text-[72px] md:text-[100px] lg:text-[120px] tracking-tighter leading-[1.1] font-black uppercase mb-12">
-          CS规则<br class="md:hidden">引擎
+          56CS
         </h1>
 
         <div class="flex flex-wrap justify-center gap-6 mt-8">
@@ -186,12 +182,14 @@ async function handleAdminLogin() {
         class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <h2 class="font-display text-2xl font-bold text-primary mb-6 uppercase">{{ $t('home.createRoom') }}</h2>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderName') }}</label>
-          <input v-model="nameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')" maxlength="20"
-            @keyup.enter="handleCreate" />
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{
+            $t('home.placeholderName') }}</label>
+          <input v-model="nameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')"
+            maxlength="20" @keyup.enter="handleCreate" />
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.gameModeTitle') }}</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{
+            $t('home.gameModeTitle') }}</label>
           <div class="flex gap-4">
             <label class="flex items-center gap-2 text-white cursor-pointer">
               <input type="radio" v-model="gameMode" value="ROULETTE" class="accent-primary" />
@@ -204,7 +202,8 @@ async function handleAdminLogin() {
           </div>
         </div>
         <div v-if="gameMode === 'IMPOSTER'" class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.imposterCountLabel') }}</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{
+            $t('home.imposterCountLabel') }}</label>
           <select v-model="imposterCount" class="input-field chamfer-clip-sm bg-surface-container text-white">
             <option :value="1">1</option>
             <option :value="2">2</option>
@@ -214,7 +213,8 @@ async function handleAdminLogin() {
           </select>
         </div>
         <button @click="handleCreate"
-          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold">{{ $t('home.initGame') }}</button>
+          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold">{{
+            $t('home.initGame') }}</button>
       </div>
     </div>
 
@@ -223,18 +223,21 @@ async function handleAdminLogin() {
         class="modal-content w-[90%] max-w-[450px] p-8 bg-surface-container border border-white/10 chamfer-clip animate-[slideUp_0.3s_ease-out]">
         <h2 class="font-display text-2xl font-bold text-secondary mb-6 uppercase">{{ $t('home.joinRoom') }}</h2>
         <div class="mb-4">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderRoomId') }}</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{
+            $t('home.placeholderRoomId') }}</label>
           <input v-model="roomIdInput"
             class="input-field chamfer-clip-sm text-center text-2xl tracking-[0.4em] font-display uppercase"
             placeholder="0000" maxlength="4" @keyup.enter="handleJoin" />
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.placeholderName') }}</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{
+            $t('home.placeholderName') }}</label>
           <input v-model="joinNameInput" class="input-field chamfer-clip-sm" :placeholder="t('home.tactical')"
             maxlength="20" @keyup.enter="handleJoin" />
         </div>
         <button @click="handleJoin"
-          class="w-full btn-base bg-secondary text-on-secondary chamfer-clip py-4 uppercase font-bold">{{ $t('home.enterGame') }}</button>
+          class="w-full btn-base bg-secondary text-on-secondary chamfer-clip py-4 uppercase font-bold">{{
+            $t('home.enterGame') }}</button>
       </div>
     </div>
 
@@ -246,12 +249,14 @@ async function handleAdminLogin() {
           <h2 class="font-display text-2xl font-bold text-primary uppercase">{{ $t('home.authTitle') }}</h2>
         </div>
         <div class="mb-6">
-          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.authCode') }}</label>
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{ $t('home.authCode')
+            }}</label>
           <input v-model="adminPwInput" type="password" class="input-field chamfer-clip-sm" placeholder="••••••••"
             @keyup.enter="handleAdminLogin" />
         </div>
         <button @click="handleAdminLogin"
-          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold tracking-widest hover:brightness-110">{{ $t('home.authAccess') }}</button>
+          class="w-full btn-base bg-primary text-on-primary chamfer-clip py-4 uppercase font-bold tracking-widest hover:brightness-110">{{
+            $t('home.authAccess') }}</button>
       </div>
     </div>
 
