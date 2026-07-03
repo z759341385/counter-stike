@@ -11,14 +11,14 @@ $ServerPath = "C:\steamcmd\cs2server"
 $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $ScriptPath
 
-Write-Host "====== [1/4] 创建 .NET 类库项目 ======" -ForegroundColor Cyan
+Write-Host "====== [1/4] Create .NET Class Library Project ======" -ForegroundColor Cyan
 if (Test-Path $ProjectName) {
-    Write-Host "发现已有项目目录，正在清理旧文件..." -ForegroundColor Gray
+    Write-Host "Cleaning up old project folder..." -ForegroundColor Gray
     Remove-Item -Recurse -Force $ProjectName -ErrorAction SilentlyContinue
 }
 dotnet new classlib -o $ProjectName
 
-Write-Host "`n====== [2/4] 添加 CounterStrikeSharp 依赖 ======" -ForegroundColor Cyan
+Write-Host "`n====== [2/4] Add CounterStrikeSharp Package ======" -ForegroundColor Cyan
 Push-Location $ProjectName
 dotnet add package CounterStrikeSharp.API
 # 删除模板自带的 Class1.cs
@@ -27,16 +27,16 @@ if (Test-Path Class1.cs) {
 }
 Pop-Location
 
-Write-Host "`n====== [3/4] 拷贝源码文件 ======" -ForegroundColor Cyan
+Write-Host "`n====== [3/4] Copy Source Code File ======" -ForegroundColor Cyan
 if (Test-Path "CenterHtmlMenu.cs") {
     Copy-Item "CenterHtmlMenu.cs" -Destination "$ProjectName/CenterHtmlMenu.cs" -Force
-    Write-Host "源码 CenterHtmlMenu.cs 已成功拷贝至项目文件夹内。" -ForegroundColor Green
+    Write-Host "Source code copied to project successfully." -ForegroundColor Green
 } else {
-    Write-Host "❌ 未能在当前目录下找到 CenterHtmlMenu.cs 源码文件！" -ForegroundColor Red
+    Write-Host "[ERROR] Could not find CenterHtmlMenu.cs in the current directory!" -ForegroundColor Red
     Exit
 }
 
-Write-Host "`n====== [4/4] 编译 Release 版本 ======" -ForegroundColor Cyan
+Write-Host "`n====== [4/4] Build Release Version ======" -ForegroundColor Cyan
 Push-Location $ProjectName
 dotnet build -c Release
 Pop-Location
@@ -45,8 +45,8 @@ $DllSource = "$ProjectName/bin/Release/net8.0/$ProjectName.dll"
 
 if (Test-Path $DllSource) {
     Write-Host "`n==========================================" -ForegroundColor Green
-    Write-Host "✅ 插件编译成功！" -ForegroundColor Green
-    Write-Host "编译生成的 DLL 路径: $DllSource" -ForegroundColor Yellow
+    Write-Host "[SUCCESS] Plugin build succeeded!" -ForegroundColor Green
+    Write-Host "Compiled DLL: $DllSource" -ForegroundColor Yellow
     Write-Host "==========================================" -ForegroundColor Green
     
     # 尝试自动部署到您的本地 CS2 服务端
@@ -56,14 +56,14 @@ if (Test-Path $DllSource) {
             New-Item -ItemType Directory -Path $PluginDestFolder -Force | Out-Null
         }
         Copy-Item $DllSource -Destination "$PluginDestFolder/$ProjectName.dll" -Force
-        Write-Host "`n🚀 自动部署成功！" -ForegroundColor Green
-        Write-Host "插件已安装至: $PluginDestFolder\$ProjectName.dll" -ForegroundColor Yellow
+        Write-Host "`n[DEPLOY] Deployed successfully!" -ForegroundColor Green
+        Write-Host "Installed to: $PluginDestFolder\$ProjectName.dll" -ForegroundColor Yellow
     } else {
-        Write-Host "`n⚠️ 提示：未检测到本地 CS2 服务端路径：$ServerPath" -ForegroundColor DarkYellow
-        Write-Host "由于未找到服务端目录，请手动完成以下两步安装：" -ForegroundColor White
-        Write-Host "1. 在服务器目录下创建新文件夹：/game/csgo/addons/counterstrikesharp/plugins/$ProjectName/" -ForegroundColor White
-        Write-Host "2. 将编译好的 $DllSource 复制到该文件夹下。" -ForegroundColor White
+        Write-Host "`n[WARN] Local CS2 directory not found at: $ServerPath" -ForegroundColor DarkYellow
+        Write-Host "Please manually install the compiled plugin:" -ForegroundColor White
+        Write-Host "1. Create folder: /game/csgo/addons/counterstrikesharp/plugins/$ProjectName/" -ForegroundColor White
+        Write-Host "2. Copy $DllSource into that folder." -ForegroundColor White
     }
 } else {
-    Write-Host "`n❌ 编译失败，请检查是否安装了 .NET SDK 8.0，或者代码中是否存在语法错误。" -ForegroundColor Red
+    Write-Host "`n[ERROR] Build failed. Please verify .NET SDK 8.0 installation and check code syntax." -ForegroundColor Red
 }
