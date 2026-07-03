@@ -1,7 +1,7 @@
 # build_and_deploy_plugin.ps1
 # 这是一个辅助脚本，用于在本地自动创建 CS2 插件项目、添加依赖、移动源码、编译并生成 DLL
 
-$ProjectName = "CS2HextechPlugin"
+$ProjectName = "CenterHtmlMenu"
 
 # =================【配置项】=================
 # 如果您的 CS2 专用服务端不在 C:\steamcmd\cs2server，请将此处修改为您本机的实际路径
@@ -28,11 +28,11 @@ if (Test-Path Class1.cs) {
 Pop-Location
 
 Write-Host "`n====== [3/4] 拷贝源码文件 ======" -ForegroundColor Cyan
-if (Test-Path "CS2HextechPlugin.cs") {
-    Copy-Item "CS2HextechPlugin.cs" -Destination "$ProjectName/CS2HextechPlugin.cs" -Force
-    Write-Host "源码 CS2HextechPlugin.cs 已成功拷贝至项目文件夹内。" -ForegroundColor Green
+if (Test-Path "CenterHtmlMenu.cs") {
+    Copy-Item "CenterHtmlMenu.cs" -Destination "$ProjectName/CenterHtmlMenu.cs" -Force
+    Write-Host "源码 CenterHtmlMenu.cs 已成功拷贝至项目文件夹内。" -ForegroundColor Green
 } else {
-    Write-Host "❌ 未能在当前目录下找到 CS2HextechPlugin.cs 源码文件！" -ForegroundColor Red
+    Write-Host "❌ 未能在当前目录下找到 CenterHtmlMenu.cs 源码文件！" -ForegroundColor Red
     Exit
 }
 
