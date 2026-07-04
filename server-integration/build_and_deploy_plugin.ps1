@@ -1,11 +1,11 @@
 # build_and_deploy_plugin.ps1
 # 这是一个辅助脚本，用于在本地自动创建 CS2 插件项目、添加依赖、移动源码、编译并生成 DLL
 
-$ProjectName = "CenterHtmlMenu"
+$ProjectName = "CS2HextechPlugin"
 
 # =================【配置项】=================
 # 如果您的 CS2 专用服务端不在 C:\steamcmd\cs2server，请将此处修改为您本机的实际路径
-$ServerPath = "C:\steamcmd\cs2server" 
+$ServerPath = "E:\cs2server" 
 # ============================================
 
 $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -20,7 +20,7 @@ dotnet new classlib -o $ProjectName
 
 Write-Host "`n====== [2/4] Add CounterStrikeSharp Package ======" -ForegroundColor Cyan
 Push-Location $ProjectName
-dotnet add package CounterStrikeSharp.API
+dotnet add package CounterStrikeSharp.API -v 1.0.351
 # 删除模板自带的 Class1.cs
 if (Test-Path Class1.cs) {
     Remove-Item Class1.cs -Force
@@ -28,11 +28,11 @@ if (Test-Path Class1.cs) {
 Pop-Location
 
 Write-Host "`n====== [3/4] Copy Source Code File ======" -ForegroundColor Cyan
-if (Test-Path "CenterHtmlMenu.cs") {
-    Copy-Item "CenterHtmlMenu.cs" -Destination "$ProjectName/CenterHtmlMenu.cs" -Force
+if (Test-Path "CS2HextechPlugin.cs") {
+    Copy-Item "CS2HextechPlugin.cs" -Destination "$ProjectName/CS2HextechPlugin.cs" -Force
     Write-Host "Source code copied to project successfully." -ForegroundColor Green
 } else {
-    Write-Host "[ERROR] Could not find CenterHtmlMenu.cs in the current directory!" -ForegroundColor Red
+    Write-Host "[ERROR] Could not find CS2HextechPlugin.cs in the current directory!" -ForegroundColor Red
     Exit
 }
 

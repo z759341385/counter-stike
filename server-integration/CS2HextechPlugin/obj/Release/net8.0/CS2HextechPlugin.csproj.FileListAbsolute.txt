@@ -1,0 +1,13 @@
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\bin\Release\net8.0\CS2HextechPlugin.deps.json
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\bin\Release\net8.0\CS2HextechPlugin.dll
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\bin\Release\net8.0\CS2HextechPlugin.pdb
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.csproj.AssemblyReference.cache
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.AssemblyInfoInputs.cache
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.AssemblyInfo.cs
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.sourcelink.json
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.dll
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\refint\CS2HextechPlugin.dll
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\CS2HextechPlugin.pdb
+C:\Users\Administrator\Documents\GitHub\counter-stike\server-integration\CS2HextechPlugin\obj\Release\net8.0\ref\CS2HextechPlugin.dll
