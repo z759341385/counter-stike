@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CS2HextechPlugin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fb98e526804f2c043813003c229a8991d7d95f1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ef60a75f9e002d2d8da4a413a4e6d13a9dabbd5")]
 [assembly: System.Reflection.AssemblyProductAttribute("CS2HextechPlugin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CS2HextechPlugin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
