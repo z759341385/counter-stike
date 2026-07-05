@@ -152,6 +152,12 @@ namespace CS2HextechPlugin
             // 注册 OnMapStart 监听
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
 
+            // 监听玩家退出事件，当玩家数量为0时自动重置服务器
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
+
+            // 注册重置命令供RCON/控制台调用并选定模式
+            AddCommand("css_hex_reset", "初始化重置服务器状态与海克斯模式", CommandResetServer);
+
             if (hotReload)
             {
                 var gameRulesProxy = Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").FirstOrDefault();
@@ -164,8 +170,82 @@ namespace CS2HextechPlugin
 
         private void OnMapStart(string mapName)
         {
-            _isGameStarted = false;
+            ResetHextechServerState(1); // 地图载入默认回到模式 1 并完全初始化
+        }
+
+        private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+        {
+            // 延迟 1 秒等待玩家完全移出在线列表
+            AddTimer(1.0f, () =>
+            {
+                var humanPlayers = Utilities.GetPlayers().Where(p => p != null && p.IsValid && !p.IsBot).ToList();
+                if (humanPlayers.Count == 0)
+                {
+                    Console.WriteLine("[HextechPlugin] 检测到服务器内已无在线人类玩家，自动重置房间状态...");
+                    ResetHextechServerState(1); // 自动重置并恢复默认模式 1
+                }
+            });
+            return HookResult.Continue;
+        }
+
+        private void CommandResetServer(CCSPlayerController? player, CommandInfo commandInfo)
+        {
+            if (player != null && !AdminManager_IsAdmin(player))
+            {
+                player.PrintToChat(" \x02[准备系统]\x01 你没有权限执行该指令！");
+                return;
+            }
+
+            int targetMode = 1;
+            if (commandInfo.ArgCount > 1)
+            {
+                int.TryParse(commandInfo.GetArg(1), out targetMode);
+            }
+
+            if (targetMode != 1 && targetMode != 2)
+            {
+                targetMode = 1;
+            }
+
+            ResetHextechServerState(targetMode);
+
+            string msg = $" \x06[准备系统]\x01 服务器已手动重置！当前激活模式：\x04模式 {targetMode}\x01，开始热身！";
+            if (player != null)
+            {
+                player.PrintToChat(msg);
+            }
+            else
+            {
+                Console.WriteLine($"[HextechPlugin] {msg}");
+            }
+        }
+
+        private bool AdminManager_IsAdmin(CCSPlayerController player)
+        {
+            return player == null || !player.IsValid || player.IsBot;
+        }
+
+        private void ResetHextechServerState(int mode)
+        {
+            _playerHextechs.Clear();
+            _playerBlinksUsed.Clear();
+            _playerChronobreaksUsed.Clear();
+            _playerHistory.Clear();
+            _playerLastChoiceRound.Clear();
+            _playerSpeedBoostEndTime.Clear();
+            _playerLastHurtTime.Clear();
+            _playerLastRegenTick.Clear();
             _readyPlayers.Clear();
+
+            _isGameStarted = false;
+            HextechConfig.CoreMode = mode;
+
+            // 强制开始热身
+            Server.ExecuteCommand("mp_warmuptime 9999");
+            Server.ExecuteCommand("mp_warmup_start");
+            Server.ExecuteCommand("mp_restartgame 1");
+
+            Console.WriteLine($"[HextechPlugin] 服务器状态已完全初始化重置。当前海克斯模式：{mode}");
         }
 
         private HookResult OnPlayerSay(CCSPlayerController? player, CommandInfo commandInfo)
@@ -174,6 +254,8 @@ namespace CS2HextechPlugin
                 return HookResult.Continue;
 
             string text = commandInfo.GetArg(1).Trim();
+            
+            // 准备就绪指令
             if (text.Equals(".r", StringComparison.OrdinalIgnoreCase) || 
                 text.Equals(".ready", StringComparison.OrdinalIgnoreCase) ||
                 text.Equals("!r", StringComparison.OrdinalIgnoreCase) ||
@@ -181,6 +263,31 @@ namespace CS2HextechPlugin
             {
                 HandlePlayerReady(player);
                 return HookResult.Handled; // 拦截消息不让公屏刷屏
+            }
+
+            // 在准备/热身阶段，允许通过聊天框切换核心玩法模式
+            if (!_isGameStarted)
+            {
+                int targetMode = 0;
+                if (text.Equals(".mode 1", StringComparison.OrdinalIgnoreCase) || 
+                    text.Equals("!mode 1", StringComparison.OrdinalIgnoreCase) ||
+                    text.Equals(".m1", StringComparison.OrdinalIgnoreCase))
+                {
+                    targetMode = 1;
+                }
+                else if (text.Equals(".mode 2", StringComparison.OrdinalIgnoreCase) || 
+                         text.Equals("!mode 2", StringComparison.OrdinalIgnoreCase) ||
+                         text.Equals(".m2", StringComparison.OrdinalIgnoreCase))
+                {
+                    targetMode = 2;
+                }
+
+                if (targetMode == 1 || targetMode == 2)
+                {
+                    ResetHextechServerState(targetMode);
+                    Server.PrintToChatAll($" \x06[准备系统]\x01 玩家 \x04{player.PlayerName}\x01 将核心玩法切换为：\x04模式 {targetMode}\x01（{(targetMode == 1 ? "每回合重新抽卡，不叠加" : "仅在 1,9,17 回合选卡，叠加生效")}）！");
+                    return HookResult.Handled;
+                }
             }
 
             return HookResult.Continue;
@@ -194,20 +301,7 @@ namespace CS2HextechPlugin
 
         private void CommandRestartRoom(CCSPlayerController? player, CommandInfo commandInfo)
         {
-            _isGameStarted = false;
-            _readyPlayers.Clear();
-            _playerHextechs.Clear();
-            _playerBlinksUsed.Clear();
-            _playerChronobreaksUsed.Clear();
-            _lastButtons.Clear();
-            _lastUseKeyPressTime.Clear();
-            _playerLastChoiceRound.Clear();
-            _playerHistory.Clear();
-            _playerSpeedBoostEndTime.Clear();
-
-            // 强制重新开启热身
-            Server.ExecuteCommand("mp_warmuptime 9999");
-            Server.ExecuteCommand("mp_warmup_start");
+            ResetHextechServerState(HextechConfig.CoreMode);
 
             string executor = player == null ? "服务器控制台" : player.PlayerName;
             Server.PrintToChatAll($" \x02[准备系统]\x01 管理员 \x04{executor}\x01 重置了房间！所有已选海克斯已清除，重新开启准备阶段。");

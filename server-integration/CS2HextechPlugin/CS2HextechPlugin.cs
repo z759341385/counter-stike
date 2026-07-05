@@ -149,6 +149,12 @@ namespace CS2HextechPlugin
             // 注册 OnMapStart 监听
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
 
+            // 监听玩家退出事件，当玩家数量为0时重置服务器
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
+
+            // 注册重置命令供RCON/控制台调用
+            AddCommand("css_hex_reset", "初始化重置服务器状态与海克斯模式", CommandResetServer);
+
             if (hotReload)
             {
                 var gameRules = Utilities.FindAllEntitiesByDesignerName<CCSGameRules>("cs_gamerules").FirstOrDefault();
@@ -161,8 +167,88 @@ namespace CS2HextechPlugin
 
         private void OnMapStart(string mapName)
         {
-            _isGameStarted = false;
+            ResetHextechServerState(1); // 地图载入默认回到模式 1 并完全初始化
+        }
+
+        private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+        {
+            // 延迟一点以确保玩家已经从在线列表中移除
+            AddTimer(1.0f, () =>
+            {
+                var humanPlayers = Utilities.GetPlayers().Where(p => p != null && p.IsValid && !p.IsBot).ToList();
+                if (humanPlayers.Count == 0)
+                {
+                    Console.WriteLine("[HextechPlugin] 检测到服务器内已无在线人类玩家，自动重置房间状态...");
+                    ResetHextechServerState(1); // 自动重置并恢复默认模式 1
+                }
+            });
+            return HookResult.Continue;
+        }
+
+        private void CommandResetServer(CCSPlayerController? player, CommandInfo commandInfo)
+        {
+            // 仅允许控制台/RCON或管理员执行（player为null说明是控制台/RCON执行）
+            if (player != null && !AdminManager_IsAdmin(player))
+            {
+                player.PrintToChat(" \x02[准备系统]\x01 你没有权限执行该指令！");
+                return;
+            }
+
+            int targetMode = 1;
+            if (commandInfo.ArgCount > 1)
+            {
+                int.TryParse(commandInfo.GetArg(1), out targetMode);
+            }
+
+            if (targetMode != 1 && targetMode != 2)
+            {
+                targetMode = 1;
+            }
+
+            ResetHextechServerState(targetMode);
+            
+            string msg = $" \x06[准备系统]\x01 服务器已手动重置！当前激活模式：\x04模式 {targetMode}\x01，开始热身！";
+            if (player != null)
+            {
+                player.PrintToChat(msg);
+            }
+            else
+            {
+                Console.WriteLine($"[HextechPlugin] {msg}");
+            }
+        }
+
+        private bool AdminManager_IsAdmin(CCSPlayerController player)
+        {
+            // 简单的权限检查，若要更严密可使用 CounterStrikeSharp 的 AdminManager。这里直接允许控制台或有管理员权限的玩家
+            return player == null || !player.IsValid || player.IsBot;
+        }
+
+        private void ResetHextechServerState(int mode)
+        {
+            _playerHextechs.Clear();
+            _playerBlinksUsed.Clear();
+            _playerChronobreaksUsed.Clear();
+            _playerHistory.Clear();
+            _playerLastChoiceRound.Clear();
+            _playerSpeedBoostEndTime.Clear();
+            _playerLastHurtTime.Clear();
+            _playerLastRegenTick.Clear();
             _readyPlayers.Clear();
+            
+            _isGameStarted = false;
+            HextechConfig.CoreMode = mode;
+
+            // 强制将游戏规则设定为热身模式并重启热身
+            var gameRules = Utilities.FindAllEntitiesByDesignerName<CCSGameRules>("cs_gamerules").FirstOrDefault();
+            if (gameRules != null)
+            {
+                Server.ExecuteCommand("mp_warmuptime 9999");
+                Server.ExecuteCommand("mp_warmup_start");
+                Server.ExecuteCommand("mp_restartgame 1");
+            }
+
+            Console.WriteLine($"[HextechPlugin] 服务器状态已完全初始化重置。当前海克斯模式：{mode} (1=单回合不叠加, 2=多阶段叠加)");
         }
 
         private HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
@@ -172,6 +258,8 @@ namespace CS2HextechPlugin
                 return HookResult.Continue;
 
             string text = @event.Text.Trim();
+            
+            // 准备就绪指令
             if (text.Equals(".r", StringComparison.OrdinalIgnoreCase) || 
                 text.Equals(".ready", StringComparison.OrdinalIgnoreCase) ||
                 text.Equals("!r", StringComparison.OrdinalIgnoreCase) ||
@@ -179,6 +267,31 @@ namespace CS2HextechPlugin
             {
                 HandlePlayerReady(player);
                 return HookResult.Stop; // 拦截消息不让公屏刷屏
+            }
+
+            // 在准备/热身阶段，允许通过聊天框切换核心玩法模式
+            if (!_isGameStarted)
+            {
+                int targetMode = 0;
+                if (text.Equals(".mode 1", StringComparison.OrdinalIgnoreCase) || 
+                    text.Equals("!mode 1", StringComparison.OrdinalIgnoreCase) ||
+                    text.Equals(".m1", StringComparison.OrdinalIgnoreCase))
+                {
+                    targetMode = 1;
+                }
+                else if (text.Equals(".mode 2", StringComparison.OrdinalIgnoreCase) || 
+                         text.Equals("!mode 2", StringComparison.OrdinalIgnoreCase) ||
+                         text.Equals(".m2", StringComparison.OrdinalIgnoreCase))
+                {
+                    targetMode = 2;
+                }
+
+                if (targetMode == 1 || targetMode == 2)
+                {
+                    ResetHextechServerState(targetMode);
+                    Server.PrintToChatAll($" \x06[准备系统]\x01 玩家 \x04{player.PlayerName}\x01 将核心玩法切换为：\x04模式 {targetMode}\x01（{(targetMode == 1 ? "每回合重新抽卡，不叠加" : "仅在 1,9,17 回合选卡，叠加生效")}）！");
+                    return HookResult.Stop;
+                }
             }
 
             return HookResult.Continue;
