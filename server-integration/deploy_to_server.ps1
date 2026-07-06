@@ -7,8 +7,10 @@ $SSH_USER = "root"
 $REMOTE_PROJECT_DIR = "/www/steam/CS2HextechPlugin"
 $REMOTE_PLUGIN_DIR = "/www/steam/cs2server/game/csgo/addons/counterstrikesharp/plugins/CS2HextechPlugin"
 
-$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$ScriptPath = $PSScriptRoot
+if ([string]::IsNullOrEmpty($ScriptPath)) { $ScriptPath = $PWD.Path }
 Set-Location $ScriptPath
+Write-Host "ScriptPath is: $ScriptPath"
 
 Write-Host "====== [1/4] Preparing Source Code ======" -ForegroundColor Cyan
 $SourceFile = "CS2HextechPlugin.cs"
@@ -17,18 +19,20 @@ if (!(Test-Path $SourceFile)) {
     Exit
 }
 
-# 确保文件以 UTF-8 BOM 编码保存，避免中文字符乱码
 Write-Host "Formatting code encoding to UTF-8 with BOM..." -ForegroundColor Gray
-$content = [System.IO.File]::ReadAllText($SourceFile, [System.Text.Encoding]::UTF8)
-[System.IO.File]::WriteAllText($SourceFile, $content, [System.Text.Encoding]::UTF8)
+$AbsoluteSourcePath = Join-Path $ScriptPath $SourceFile
+$SourceContent = [System.IO.File]::ReadAllText($AbsoluteSourcePath, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($AbsoluteSourcePath, $SourceContent, [System.Text.Encoding]::UTF8)
 
-# 进行 Base64 编码以在 PowerShell SSH 传输时免疫乱码
+$bytes = [System.IO.File]::ReadAllBytes($AbsoluteSourcePath)
+$b64 = [Convert]::ToBase64String($bytes)
 $TempB64File = "CS2HextechPlugin.cs.b64"
-[System.IO.File]::WriteAllText($TempB64File, [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($SourceFile)))
+$AbsoluteB64Path = Join-Path $ScriptPath $TempB64File
+[System.IO.File]::WriteAllText($AbsoluteB64Path, $b64, [System.Text.Encoding]::ASCII)
 
 Write-Host "`n====== [2/4] Uploading Code to Server ======" -ForegroundColor Cyan
-cmd /c "type $TempB64File | ssh -p $SSH_PORT $SSH_USER@$SSH_HOST ""base64 -d > $REMOTE_PROJECT_DIR/$SourceFile"""
-Remove-Item $TempB64File -Force
+cmd /c "type `"$AbsoluteB64Path`" | ssh -p $SSH_PORT $SSH_USER@$SSH_HOST ""base64 -d > $REMOTE_PROJECT_DIR/$SourceFile"""
+Remove-Item $AbsoluteB64Path -Force
 
 Write-Host "`n====== [3/4] Compiling on Remote Server (.NET 10) ======" -ForegroundColor Cyan
 $BuildCommand = "export PATH=/root/.dotnet:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin && cd $REMOTE_PROJECT_DIR && dotnet build -c Release"

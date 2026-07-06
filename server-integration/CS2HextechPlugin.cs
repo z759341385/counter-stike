@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using CounterStrikeSharp.API;
@@ -59,9 +59,7 @@ namespace CS2HextechPlugin
         // 质变棱彩 (PrismaticChange) 无单独配置参数
 
         // --- 🔮 彩色 (Prismatic) ---
-        public static float SoulOutDuration = 8.0f; // 👻 灵魂出窍
-        public static int SoulOutHealthReward = 50;
-        public static int SoulOutLimitPerRound = 1;
+        // SoulOut removed
         public static float GlassCannonDamageMultiplier = 1.5f; // 💥 玻璃大炮
         public static int GlassCannonMaxHealthLimit = 60;
         public static float ChronobreakTraceDuration = 3.0f; // ⏳ 时空回溯
@@ -69,17 +67,13 @@ namespace CS2HextechPlugin
         public static float KillerMasterDamageIncreasePerKill = 0.3f; // 👑 我是高手
         public static float KillerMasterDamageReductionPerKill = 0.03f;
         public static float KillerMasterMaxDamageReduction = 0.90f;
-        public static float TinySlayerModelScale = 0.7f; // 🛸 巨人杀手
-        public static float TinySlayerSpeedModifier = 1.2f;
-        public static float TinySlayerDamageMultiplier = 1.3f;
+        // TinySlayer removed due to hitbox issues
         public static float NoPrimaryDamageMultiplier = 1.5f; // 🚫 回归基本功
         public static float NoPrimaryLifestealRatio = 0.3f;
         public static float NoPrimarySpeedBoostModifier = 1.1f;
         public static int NoPrimarySpawnArmor = 100;
         public static bool NoPrimarySpawnHelmet = true;
-        public static float GoliathModelScale = 1.3f; // 🌋 歌利亚巨人
-        public static float GoliathHealthMultiplier = 1.5f;
-        public static float GoliathDamageMultiplier = 1.2f;
+        // Goliath removed due to hitbox issues
         public static float UnluckyContractMaxDamageBonus = 0.5f; // ☠️ 不详契约
         public static float UnluckyContractMaxSpeedBonus = 0.3f;
         public static float UnluckyContractMaxLifestealRatio = 0.4f;
@@ -105,7 +99,7 @@ namespace CS2HextechPlugin
         // Use/F key states
         private readonly Dictionary<ulong, PlayerButtons> _lastButtons = new();
         private readonly Dictionary<ulong, DateTime> _lastUseKeyPressTime = new();
-        private readonly Dictionary<ulong, DateTime> _lastLookKeyPressTime = new();
+        // F key inspect tracker removed
 
         // Specific Ability Trackers
         private readonly Dictionary<ulong, int> _playerBlinksUsed = new();
@@ -126,11 +120,7 @@ namespace CS2HextechPlugin
         private readonly Dictionary<ulong, int> _playerHeThrown = new();
         private readonly Dictionary<ulong, int> _playerMolotovThrown = new();
 
-        // Soul Out
-        private readonly Dictionary<ulong, bool> _playerIsSoul = new();
-        private readonly Dictionary<ulong, int> _playerSoulUsed = new();
-        private readonly Dictionary<ulong, Vector> _playerSoulBodyPos = new();
-        private readonly Dictionary<ulong, DateTime> _playerSoulEndTime = new();
+        // Soul Out removed
 
         private readonly Dictionary<ulong, int> _playerLastChoiceRound = new();
         private bool _isGameStarted = false;
@@ -159,6 +149,7 @@ namespace CS2HextechPlugin
 
             AddCommandListener("say", OnPlayerSay);
             AddCommandListener("say_team", OnPlayerSay);
+            // inspect key listener removed
 
             RegisterListener<Listeners.OnTick>(OnTick);
             RegisterListener<Listeners.OnEntityTakeDamagePre>(OnTakeDamage);
@@ -231,8 +222,7 @@ namespace CS2HextechPlugin
             _playerDisableFireEndTime.Clear();
             _playerHeThrown.Clear();
             _playerMolotovThrown.Clear();
-            _playerIsSoul.Clear();
-            _playerSoulUsed.Clear();
+            // Soul Out clear removed
             _readyPlayers.Clear();
 
             _isGameStarted = false;
@@ -270,6 +260,8 @@ namespace CS2HextechPlugin
             }
             return HookResult.Continue;
         }
+
+        // OnLookAtWeaponCommand removed
 
         private void CommandReady(CCSPlayerController? player, CommandInfo commandInfo)
         {
@@ -371,7 +363,6 @@ namespace CS2HextechPlugin
                 }
             }
 
-            _playerIsSoul[player.SteamID] = false; // reset soul out
             _playerBleedEndTime[player.SteamID] = DateTime.MinValue; // reset bleed
             _playerDisableFireEndTime[player.SteamID] = DateTime.MinValue; // reset blind
 
@@ -410,16 +401,17 @@ namespace CS2HextechPlugin
 
             pawn.MaxHealth = 100;
             pawn.VelocityModifier = 1.0f;
-            pawn.m_flModelScale = 1.0f; 
+            if (pawn.CBodyComponent?.SceneNode != null)
+            {
+                pawn.CBodyComponent.SceneNode.Scale = 1.0f;
+            } 
 
             bool hasTitan = HasHextech(player, "Titan");
             bool hasGlass = HasHextech(player, "GlassCannon");
-            bool hasGoliath = HasHextech(player, "Goliath");
 
             int targetMaxHp = 100;
             if (hasTitan) targetMaxHp = HextechConfig.TitanMaxHealth; 
             if (hasGlass) targetMaxHp = HextechConfig.GlassCannonMaxHealthLimit; 
-            if (hasGoliath) targetMaxHp = (int)(targetMaxHp * HextechConfig.GoliathHealthMultiplier);
 
             pawn.MaxHealth = targetMaxHp;
             pawn.Health = targetMaxHp;
@@ -429,12 +421,8 @@ namespace CS2HextechPlugin
 
             float speedMod = 1.0f;
             if (HasHextech(player, "Speed")) speedMod = Math.Max(speedMod, HextechConfig.SpeedModifier);
-            if (HasHextech(player, "TinySlayer")) speedMod = Math.Max(speedMod, HextechConfig.TinySlayerSpeedModifier);
             if (HasHextech(player, "NoPrimary")) speedMod = Math.Max(speedMod, HextechConfig.NoPrimarySpeedBoostModifier);
             pawn.VelocityModifier = speedMod;
-
-            if (HasHextech(player, "TinySlayer")) pawn.m_flModelScale = HextechConfig.TinySlayerModelScale;
-            if (HasHextech(player, "Goliath")) pawn.m_flModelScale = HextechConfig.GoliathModelScale;
 
             if (HasHextech(player, "HeavyInfantry") || HasHextech(player, "WeaponMaster") || HasHextech(player, "NoPrimary"))
             {
@@ -509,6 +497,8 @@ namespace CS2HextechPlugin
 
             if (attackerPlayer != null && attackerPlayer.IsValid && !attackerPlayer.IsBot)
             {
+                attackerPlayer.PrintToConsole($"[伤害测试] 你对 {(victimPlayer != null ? victimPlayer.PlayerName : "未知")} 造成了 {dmg} 点真实伤害 (护甲吸收: {@event.DmgArmor})。");
+
                 // Vampire & NoPrimary & UnluckyContract Lifesteal
                 float totalLifesteal = 0;
                 if (HasHextech(attackerPlayer, "Vampire")) totalLifesteal += HextechConfig.VampireRatio;
@@ -597,15 +587,7 @@ namespace CS2HextechPlugin
             var attackerEntity = info.Attacker.Value;
             var attackerPlayer = GetPlayerFromEntity(attackerEntity);
 
-            // Soul Out Damage Prevent
-            if (victimPlayer != null && victimPlayer.IsValid)
-            {
-                if (_playerIsSoul.TryGetValue(victimPlayer.SteamID, out bool isSoul) && isSoul)
-                {
-                    info.Damage = 0; // Soul takes no damage
-                    return HookResult.Changed;
-                }
-            }
+            // Soul Out Damage Prevent removed
 
             bool damageChanged = false;
 
@@ -629,17 +611,11 @@ namespace CS2HextechPlugin
             // Offensive mods
             if (attackerPlayer != null && attackerPlayer.IsValid && !attackerPlayer.IsBot)
             {
-                if (_playerIsSoul.TryGetValue(attackerPlayer.SteamID, out bool isSoulAttacker) && isSoulAttacker)
-                {
-                    info.Damage = 0; // Soul deals no damage
-                    return HookResult.Changed;
-                }
+                // Soul Out Attacker check removed
 
                 float dmgMult = 1.0f;
                 if (HasHextech(attackerPlayer, "GlassCannon")) dmgMult *= HextechConfig.GlassCannonDamageMultiplier;
-                if (HasHextech(attackerPlayer, "TinySlayer")) dmgMult *= HextechConfig.TinySlayerDamageMultiplier;
                 if (HasHextech(attackerPlayer, "NoPrimary")) dmgMult *= HextechConfig.NoPrimaryDamageMultiplier;
-                if (HasHextech(attackerPlayer, "Goliath")) dmgMult *= HextechConfig.GoliathDamageMultiplier;
                 
                 if (HasHextech(attackerPlayer, "KillerMaster"))
                 {
@@ -679,14 +655,17 @@ namespace CS2HextechPlugin
                     damageChanged = true;
                 }
 
-                if (HasHextech(attackerPlayer, "Execute") && victimPawn.Health < HextechConfig.ExecuteThreshold)
+                if (HasHextech(attackerPlayer, "Execute"))
                 {
-                    info.Damage = victimPawn.Health + 100.0f; 
-                    damageChanged = true;
+                    if (victimPawn.Health < HextechConfig.ExecuteThreshold || (victimPawn.Health - info.Damage) < HextechConfig.ExecuteThreshold)
+                    {
+                        info.Damage = 999.0f;
+                        damageChanged = true;
+                    }
                 }
             }
 
-            return damageChanged ? HookResult.Changed : HookResult.Continue;
+            return HookResult.Continue;
         }
 
         private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
@@ -784,8 +763,6 @@ namespace CS2HextechPlugin
             _playerHistory.Clear();
             _playerHeThrown.Clear();
             _playerMolotovThrown.Clear();
-            _playerSoulUsed.Clear();
-            _playerIsSoul.Clear();
 
             var gameRulesProxy = Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").FirstOrDefault();
             if (gameRulesProxy != null && gameRulesProxy.GameRules != null && !gameRulesProxy.GameRules.WarmupPeriod && !_isGameStarted)
@@ -843,28 +820,7 @@ namespace CS2HextechPlugin
             _playerChronobreaksUsed[player.SteamID] = used + 1;
         }
 
-        private void TriggerSoulOut(CCSPlayerController player)
-        {
-            if (!player.PawnIsAlive) return;
-            if (!HasHextech(player, "SoulOut")) return;
-            
-            _playerSoulUsed.TryGetValue(player.SteamID, out var used);
-            if (used >= HextechConfig.SoulOutLimitPerRound) return;
-
-            var pawn = player.PlayerPawn.Value;
-            if (pawn == null || !pawn.IsValid) return;
-
-            _playerIsSoul[player.SteamID] = true;
-            _playerSoulUsed[player.SteamID] = used + 1;
-            _playerSoulBodyPos[player.SteamID] = new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z);
-            
-            // Render invisible/color
-            pawn.Render = System.Drawing.Color.FromArgb(0, 255, 255, 255); // Alpha 0
-            Utilities.SetStateChanged(pawn, "CBaseModelEntity", "m_clrRender");
-            
-            _playerSoulEndTime[player.SteamID] = DateTime.Now.AddSeconds(HextechConfig.SoulOutDuration);
-            player.PrintToChat(" \x06[海克斯]\x01 已化为灵魂！");
-        }
+        // TriggerSoulOut removed
 
         private void OnTick()
         {
@@ -913,8 +869,11 @@ namespace CS2HextechPlugin
                 {
                     if (_playerDisableFireEndTime.TryGetValue(player.SteamID, out var fireEnd) && DateTime.Now < fireEnd)
                     {
-                        player.Buttons &= ~PlayerButtons.Attack;
-                        player.Buttons &= ~PlayerButtons.Attack2;
+                        if (pawn != null && pawn.MovementServices != null)
+                        {
+                            pawn.MovementServices.Buttons.ButtonStates[0] &= ~(ulong)PlayerButtons.Attack;
+                            pawn.MovementServices.Buttons.ButtonStates[0] &= ~(ulong)PlayerButtons.Attack2;
+                        }
                     }
                 }
 
@@ -926,24 +885,7 @@ namespace CS2HextechPlugin
                     pawn.VelocityModifier = 1.0f + (loss * HextechConfig.UnluckyContractMaxSpeedBonus);
                 }
 
-                // SoulOut End Check
-                if (player.PawnIsAlive && _playerIsSoul.TryGetValue(player.SteamID, out bool isSoul) && isSoul)
-                {
-                    if (DateTime.Now >= _playerSoulEndTime[player.SteamID])
-                    {
-                        _playerIsSoul[player.SteamID] = false;
-                        pawn.Render = System.Drawing.Color.FromArgb(255, 255, 255, 255); // Restore alpha
-                        Utilities.SetStateChanged(pawn, "CBaseModelEntity", "m_clrRender");
-                        
-                        if (_playerSoulBodyPos.TryGetValue(player.SteamID, out var pos))
-                        {
-                            pawn.Teleport(pos, null, null);
-                        }
-                        pawn.Health = Math.Min(pawn.MaxHealth, pawn.Health + HextechConfig.SoulOutHealthReward);
-                        Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
-                        player.PrintToChat(" \x06[海克斯]\x01 灵魂持续时间结束，已重置肉身！");
-                    }
-                }
+                // SoulOut End Check removed
                 
                 // NoPrimary Weapon Strip
                 if (player.PawnIsAlive && HasHextech(player, "NoPrimary"))
@@ -955,13 +897,11 @@ namespace CS2HextechPlugin
                         {
                             if (weapon != null && weapon.IsValid && weapon.Value != null && weapon.Value.IsValid)
                             {
-                                string wname = weapon.Value.DesignerName ?? "";
-                                if (wname.Contains("ak47") || wname.Contains("m4a1") || wname.Contains("awp") || 
-                                    wname.Contains("negev") || wname.Contains("xm1014") || wname.Contains("mac10") || 
-                                    wname.Contains("mp9") || wname.Contains("galil") || wname.Contains("famas") || wname.Contains("aug") || wname.Contains("sg556"))
+                                var gearSlot = weapon.Value.As<CCSWeaponBase>().VData?.GearSlot;
+                                if (gearSlot == gear_slot_t.GEAR_SLOT_RIFLE)
                                 {
                                     pawn.RemovePlayerItem(weapon.Value);
-                                    weapon.Value.Remove();
+                                    weapon.Value.AcceptInput("Kill");
                                 }
                             }
                         }
@@ -1022,18 +962,7 @@ namespace CS2HextechPlugin
                     else _lastUseKeyPressTime[player.SteamID] = now;
                 }
                 
-                // F Key (LookAtWeapon)
-                if ((currentButtons & PlayerButtons.LookAtWeapon) != 0 && (previousButtons & PlayerButtons.LookAtWeapon) == 0)
-                {
-                    var now = DateTime.Now;
-                    _lastLookKeyPressTime.TryGetValue(player.SteamID, out var lastPress);
-                    if ((now - lastPress).TotalMilliseconds < HextechConfig.BlinkDoubleClickInterval)
-                    {
-                        _lastLookKeyPressTime[player.SteamID] = DateTime.MinValue;
-                        if (HasHextech(player, "SoulOut")) TriggerSoulOut(player);
-                    }
-                    else _lastLookKeyPressTime[player.SteamID] = now;
-                }
+                // F key (inspect) is now handled via OnLookAtWeaponCommand listener to prevent compile errors.
 
                 _lastButtons[player.SteamID] = currentButtons;
             }
@@ -1050,7 +979,7 @@ namespace CS2HextechPlugin
                 string name = weapon.Value.DesignerName ?? "";
                 if (name.Contains("knife") || name.Contains("bayonet") || name.Contains("melee") || name.Contains("taser")) continue;
                 pawn.RemovePlayerItem(weapon.Value);
-                weapon.Value.Remove();
+                weapon.Value.AcceptInput("Kill");
             }
         }
 
@@ -1070,38 +999,36 @@ namespace CS2HextechPlugin
             var allOptions = new List<HextechOption>
             {
                 // Silver (9)
-                new HextechOption("Speed", "⚡ 风行者 <font size='12'>(速度提升 1.3 倍)</font>", (p) => ApplyHextechEffect(p, "Speed")),
-                new HextechOption("Bounty", "💎 赏金猎人 <font size='12'>(击杀+$2000 & 刷新电击枪)</font>", (p) => ApplyHextechEffect(p, "Bounty")),
-                new HextechOption("Thorns", "🛡️ 棘刺甲壳 <font size='12'>(反弹 30% 受到伤害)</font>", (p) => ApplyHextechEffect(p, "Thorns")),
-                new HextechOption("Reckoner", "🔥 狂徒 <font size='12'>(无伤 10 秒后每秒回复 2 HP)</font>", (p) => ApplyHextechEffect(p, "Reckoner")),
-                new HextechOption("Bleed", "🔥 流血 <font size='12'>(攻击造成 5秒流血)</font>", (p) => ApplyHextechEffect(p, "Bleed")),
-                new HextechOption("FlashMagic", "🪄 精怪魔法 <font size='12'>(致盲敌人3秒内不能开火)</font>", (p) => ApplyHextechEffect(p, "FlashMagic")),
-                new HextechOption("GrenadeMaster", "💣 道具大师 <font size='12'>(投掷物伤害+50%并可用2颗)</font>", (p) => ApplyHextechEffect(p, "GrenadeMaster")),
-                new HextechOption("LastStand", "💣 自爆卡车 <font size='12'>(死亡爆炸伤害周围敌人)</font>", (p) => ApplyHextechEffect(p, "LastStand")),
-                new HextechOption("GoldenChange", "✨ 质变黄金 <font size='12'>(随机获得金色海克斯)</font>", (p) => ApplyHextechEffect(p, "GoldenChange")),
+                new HextechOption("Speed", "<font size='20'>⚡ 风行者</font> <font size='15'>(速度提升 1.3 倍)</font>", (p) => ApplyHextechEffect(p, "Speed")),
+                new HextechOption("Bounty", "<font size='20'>💎 赏金猎人</font> <font size='15'>(击杀+$2000 & 刷新电击枪)</font>", (p) => ApplyHextechEffect(p, "Bounty")),
+                new HextechOption("Thorns", "<font size='20'>🛡️ 棘刺甲壳</font> <font size='15'>(反弹 30% 受到伤害)</font>", (p) => ApplyHextechEffect(p, "Thorns")),
+                new HextechOption("Reckoner", "<font size='20'>🔥 狂徒</font> <font size='15'>(无伤 10 秒后每秒回复 2 HP)</font>", (p) => ApplyHextechEffect(p, "Reckoner")),
+                new HextechOption("Bleed", "<font size='20'>🔥 流血</font> <font size='15'>(攻击造成 5秒流血)</font>", (p) => ApplyHextechEffect(p, "Bleed")),
+                new HextechOption("FlashMagic", "<font size='20'>🪄 精怪魔法</font> <font size='15'>(致盲敌人3秒内不能开火)</font>", (p) => ApplyHextechEffect(p, "FlashMagic")),
+                new HextechOption("GrenadeMaster", "<font size='20'>💣 道具大师</font> <font size='15'>(投掷物伤害+50%并可用2颗)</font>", (p) => ApplyHextechEffect(p, "GrenadeMaster")),
+                new HextechOption("LastStand", "<font size='20'>💣 自爆卡车</font> <font size='15'>(死亡爆炸伤害周围敌人)</font>", (p) => ApplyHextechEffect(p, "LastStand")),
+                new HextechOption("GoldenChange", "<font size='20'>✨ 质变黄金</font> <font size='15'>(随机获得金色海克斯)</font>", (p) => ApplyHextechEffect(p, "GoldenChange")),
 
                 // Gold (11)
-                new HextechOption("Titan", "❤️ 泰坦之躯 <font size='12'>(全额 200HP)</font>", (p) => ApplyHextechEffect(p, "Titan")),
-                new HextechOption("Vampire", "🩸 吸血狂热 <font size='12'>(造成伤害回血 30%)</font>", (p) => ApplyHextechEffect(p, "Vampire")),
-                new HextechOption("Blink", "🌀 闪现星使 <font size='12'>(双击 E 键闪现，每回合2次)</font>", (p) => ApplyHextechEffect(p, "Blink")),
-                new HextechOption("KillRush", "🏃 狂暴杀戮 <font size='12'>(击杀后 3秒 提升移速)</font>", (p) => ApplyHextechEffect(p, "KillRush")),
-                new HextechOption("HeavyInfantry", "🎖️ 重装坦克 <font size='12'>(自带全套防弹衣 & 减伤15%)</font>", (p) => ApplyHextechEffect(p, "HeavyInfantry")),
-                new HextechOption("WeaponMaster", "🎲 武器大师 <font size='12'>(每局随机主副武器 & 全套防弹衣)</font>", (p) => ApplyHextechEffect(p, "WeaponMaster")),
-                new HextechOption("Backstab", "🗡️ 小丑背刺 <font size='12'>(背后攻击 3 倍伤害)</font>", (p) => ApplyHextechEffect(p, "Backstab")),
-                new HextechOption("Execute", "🎯 死神斩杀 <font size='12'>(斩杀低于 35HP 敌人)</font>", (p) => ApplyHextechEffect(p, "Execute")),
-                new HextechOption("IndomitableWill", "🛡️ 坚韧不拔 <font size='12'>(血量越低回血越快)</font>", (p) => ApplyHextechEffect(p, "IndomitableWill")),
-                new HextechOption("HeadshotMaster", "🎯 爆头大师 <font size='12'>(爆头100%吸血)</font>", (p) => ApplyHextechEffect(p, "HeadshotMaster")),
-                new HextechOption("PrismaticChange", "✨ 质变棱彩 <font size='12'>(随机获得彩色海克斯)</font>", (p) => ApplyHextechEffect(p, "PrismaticChange")),
+                new HextechOption("Titan", "<font size='20'>❤️ 泰坦之躯</font> <font size='15'>(全额 200HP)</font>", (p) => ApplyHextechEffect(p, "Titan")),
+                new HextechOption("Vampire", "<font size='20'>🩸 吸血狂热</font> <font size='15'>(造成伤害回血 30%)</font>", (p) => ApplyHextechEffect(p, "Vampire")),
+                new HextechOption("Blink", "<font size='20'>🌀 闪现星使</font> <font size='15'>(双击 E 键闪现，每回合2次)</font>", (p) => ApplyHextechEffect(p, "Blink")),
+                new HextechOption("KillRush", "<font size='20'>🏃 狂暴杀戮</font> <font size='15'>(击杀后 3秒 提升移速)</font>", (p) => ApplyHextechEffect(p, "KillRush")),
+                new HextechOption("HeavyInfantry", "<font size='20'>🎖️ 重装坦克</font> <font size='15'>(自带全套防弹衣 & 减伤15%)</font>", (p) => ApplyHextechEffect(p, "HeavyInfantry")),
+                new HextechOption("WeaponMaster", "<font size='20'>🎲 武器大师</font> <font size='15'>(每局随机主副武器 & 全套防弹衣)</font>", (p) => ApplyHextechEffect(p, "WeaponMaster")),
+                new HextechOption("Backstab", "<font size='20'>🗡️ 小丑背刺</font> <font size='15'>(背后攻击 3 倍伤害)</font>", (p) => ApplyHextechEffect(p, "Backstab")),
+                new HextechOption("Execute", "<font size='20'>🎯 死神斩杀</font> <font size='15'>(斩杀低于 35HP 敌人)</font>", (p) => ApplyHextechEffect(p, "Execute")),
+                new HextechOption("IndomitableWill", "<font size='20'>🛡️ 坚韧不拔</font> <font size='15'>(血量越低回血越快)</font>", (p) => ApplyHextechEffect(p, "IndomitableWill")),
+                new HextechOption("HeadshotMaster", "<font size='20'>🎯 爆头大师</font> <font size='15'>(爆头100%吸血)</font>", (p) => ApplyHextechEffect(p, "HeadshotMaster")),
+                new HextechOption("PrismaticChange", "<font size='20'>✨ 质变棱彩</font> <font size='15'>(随机获得彩色海克斯)</font>", (p) => ApplyHextechEffect(p, "PrismaticChange")),
 
-                // Prismatic (8)
-                new HextechOption("SoulOut", "👻 灵魂出窍 <font size='12'>(双击F灵魂分离 8秒)</font>", (p) => ApplyHextechEffect(p, "SoulOut")),
-                new HextechOption("GlassCannon", "💥 玻璃大炮 <font size='12'>(伤害+50% & 血量上限60)</font>", (p) => ApplyHextechEffect(p, "GlassCannon")),
-                new HextechOption("Chronobreak", "⏳ 时空回溯 <font size='12'>(双击 E 键回溯 3秒前状态)</font>", (p) => ApplyHextechEffect(p, "Chronobreak")),
-                new HextechOption("KillerMaster", "👑 我是高手 <font size='12'>(击杀加伤害与减伤)</font>", (p) => ApplyHextechEffect(p, "KillerMaster")),
-                new HextechOption("TinySlayer", "🛸 巨人杀手 <font size='12'>(体型变小，移速伤害提升)</font>", (p) => ApplyHextechEffect(p, "TinySlayer")),
-                new HextechOption("NoPrimary", "🚫 回归基本功 <font size='12'>(禁主武器，加伤害吸血移速)</font>", (p) => ApplyHextechEffect(p, "NoPrimary")),
-                new HextechOption("Goliath", "🌋 歌利亚巨人 <font size='12'>(体型变大，血量伤害提升)</font>", (p) => ApplyHextechEffect(p, "Goliath")),
-                new HextechOption("UnluckyContract", "☠️ 不详契约 <font size='12'>(血越少伤害移速越高，开火自伤)</font>", (p) => ApplyHextechEffect(p, "UnluckyContract"))
+                // Prismatic (6)
+                // SoulOut Option removed
+                new HextechOption("GlassCannon", "<font size='20'>💥 玻璃大炮</font> <font size='15'>(伤害+50% & 血量上限60)</font>", (p) => ApplyHextechEffect(p, "GlassCannon")),
+                new HextechOption("Chronobreak", "<font size='20'>⏳ 时空回溯</font> <font size='15'>(双击 E 键回溯 3秒前状态)</font>", (p) => ApplyHextechEffect(p, "Chronobreak")),
+                new HextechOption("KillerMaster", "<font size='20'>👑 我是高手</font> <font size='15'>(击杀加伤害与减伤)</font>", (p) => ApplyHextechEffect(p, "KillerMaster")),
+                new HextechOption("NoPrimary", "<font size='20'>🚫 回归基本功</font> <font size='15'>(禁主武器，加伤害吸血移速)</font>", (p) => ApplyHextechEffect(p, "NoPrimary")),
+                new HextechOption("UnluckyContract", "<font size='20'>☠️ 不详契约</font> <font size='15'>(血越少伤害移速越高，开火自伤)</font>", (p) => ApplyHextechEffect(p, "UnluckyContract"))
             };
 
             var selectedOptions = new List<HextechOption>();
@@ -1112,7 +1039,7 @@ namespace CS2HextechPlugin
                 allOptions.RemoveAt(index);
             }
 
-            var hexMenu = new CenterHtmlMenu("<font color='#a4e6ff'><b>🧬 战术实验室：请选择本局海克斯效果</b></font>", this);
+            var hexMenu = new CenterHtmlMenu("<font color='#a4e6ff' size='24'><b>🧬 战术实验室：请选择本局海克斯效果</b></font>", this);
             foreach (var opt in selectedOptions)
             {
                 hexMenu.AddMenuOption(opt.DisplayName, (playerController, option) => { opt.ApplyAction(playerController); });
@@ -1129,13 +1056,13 @@ namespace CS2HextechPlugin
             {
                 string[] goldens = { "Titan", "Vampire", "Blink", "KillRush", "HeavyInfantry", "WeaponMaster", "Backstab", "Execute", "IndomitableWill", "HeadshotMaster" };
                 hexType = goldens[_random.Next(goldens.Length)];
-                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变黄金！获得了金色海克斯：\x04{hexType}\x01！");
+                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变黄金！获得了金色海克斯：\x04{GetHextechChineseName(hexType)}\x01！");
             }
             else if (hexType == "PrismaticChange")
             {
-                string[] prismatics = { "SoulOut", "GlassCannon", "Chronobreak", "KillerMaster", "TinySlayer", "NoPrimary", "Goliath", "UnluckyContract" };
+                string[] prismatics = { "GlassCannon", "Chronobreak", "KillerMaster", "NoPrimary", "UnluckyContract" };
                 hexType = prismatics[_random.Next(prismatics.Length)];
-                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变棱彩！获得了彩色海克斯：\x04{hexType}\x01！");
+                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变棱彩！获得了彩色海克斯：\x04{GetHextechChineseName(hexType)}\x01！");
             }
 
             if (!_playerHextechs.ContainsKey(player.SteamID)) _playerHextechs[player.SteamID] = new HashSet<string>();
@@ -1144,8 +1071,40 @@ namespace CS2HextechPlugin
             _playerLastChoiceRound[player.SteamID] = GetCurrentRound();
 
             ReapplyActiveHextechs(player);
-            player.PrintToChat($" \x06[海克斯]\x01 你已成功选择海克斯：\x04{hexType}\x01！");
+            player.PrintToChat($" \x06[海克斯]\x01 你已成功选择海克斯：\x04{GetHextechChineseName(hexType)}\x01！");
             MenuManager.CloseActiveMenu(player);
+        }
+
+        private string GetHextechChineseName(string hexId)
+        {
+            return hexId switch
+            {
+                "Speed" => "风行者",
+                "Bounty" => "赏金猎人",
+                "Thorns" => "棘刺甲壳",
+                "Reckoner" => "狂徒",
+                "Bleed" => "流血",
+                "FlashMagic" => "精怪魔法",
+                "GrenadeMaster" => "道具大师",
+                "LastStand" => "自爆卡车",
+                "Titan" => "泰坦之躯",
+                "Vampire" => "吸血狂热",
+                "Blink" => "闪现星使",
+                "KillRush" => "狂暴杀戮",
+                "HeavyInfantry" => "重装坦克",
+                "WeaponMaster" => "武器大师",
+                "Backstab" => "小丑背刺",
+                "Execute" => "死神斩杀",
+                "IndomitableWill" => "坚韧不拔",
+                "HeadshotMaster" => "爆头大师",
+                // SoulOut translation removed
+                "GlassCannon" => "玻璃大炮",
+                "Chronobreak" => "时空回溯",
+                "KillerMaster" => "我是高手",
+                "NoPrimary" => "回归基本功",
+                "UnluckyContract" => "不详契约",
+                _ => hexId
+            };
         }
     }
 
@@ -1160,3 +1119,4 @@ namespace CS2HextechPlugin
         }
     }
 }
+
