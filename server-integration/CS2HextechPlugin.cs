@@ -17,60 +17,73 @@ namespace CS2HextechPlugin
         // 核心玩法模式：1 = 每回合重新抽取且不叠加，2 = 1/9/17回合抽取且叠加
         public static int CoreMode = 1;
 
-        // 1. ❤️ 泰坦之躯 (Titan)
-        public static int TitanMaxHealth = 200;
-        public static int TitanSpawnHealth = 200;
-
-        // 2. 🩸 吸血狂热 (Vampire)
-        public static float VampireRatio = 0.3f; // 30%
-
-        // 3. ⚡ 风行者 (Speed)
-        public static float SpeedModifier = 1.3f; // 1.3倍速
-
-        // 4. 💎 赏金猎人 (Bounty)
-        public static int BountyKillReward = 2000;
+        // --- 🥈 银色 (Silver) ---
+        public static float SpeedModifier = 1.3f; // ⚡ 风行者
+        public static int BountyKillReward = 2000; // 💎 赏金猎人
         public static string BountyRefreshWeapon = "weapon_taser";
+        public static float ThornsReflectRatio = 0.3f; // 🛡️ 棘刺甲壳
+        public static float ReckonerRegenDelay = 10.0f; // 🔥 狂徒
+        public static int ReckonerRegenPerSecond = 2;
+        public static float ReckonerRegenCap = 0.8f;
+        public static int BleedDamage = 2; // 🔥 流血
+        public static float BleedDuration = 5.0f;
+        public static float FlashMagicDisableFireDuration = 3.0f; // 🪄 精怪魔法
+        public static float GrenadeMasterDamageMultiplier = 1.5f; // 💣 道具大师
+        public static int GrenadeMasterMaxHegrenadeCount = 2;
+        public static int GrenadeMasterMaxMolotovCount = 2;
+        public static float LastStandExplosionRadius = 300f; // 💣 自爆卡车
+        public static int LastStandMaxExplosionDamage = 100;
+        // 质变黄金 (GoldenChange) 无单独配置参数
 
-        // 5. 🌀 闪现星使 (Blink)
-        public static int BlinkDoubleClickInterval = 300; // 300ms
+        // --- 🥇 金色 (Gold) ---
+        public static int TitanMaxHealth = 200; // ❤️ 泰坦之躯
+        public static int TitanSpawnHealth = 200;
+        public static float VampireRatio = 0.3f; // 🩸 吸血狂热
+        public static int BlinkDoubleClickInterval = 300; // 🌀 闪现星使
         public static float BlinkDistance = 160f;
         public static int BlinkLimitPerRound = 2;
-
-        // 6. 💥 玻璃大炮 (GlassCannon)
-        public static float GlassCannonDamageMultiplier = 1.5f; // +50%
-        public static int GlassCannonMaxHealthLimit = 60;
-
-        // 7. 🛡️ 棘刺甲壳 (Thorns)
-        public static float ThornsReflectRatio = 0.3f; // 30%
-
-        // 8. 🎯 死神斩杀 (Execute)
-        public static int ExecuteThreshold = 35; // 35 HP
-
-        // 9. 🏃 狂暴杀戮 (KillRush)
-        public static float KillRushSpeedBoostModifier = 1.5f;
-        public static float KillRushBoostDuration = 5.0f; // 5秒
-
-        // 10. ⏳ 时空回溯 (Chronobreak)
-        public static float ChronobreakTraceDuration = 3.0f; // 3秒
-        public static int ChronobreakLimitPerRound = 1;
-
-        // 11. 🎖️ 重装坦克 (HeavyInfantry)
-        public static float HeavyInfantryDamageReduction = 0.15f; // 15% 减伤
+        public static float KillRushSpeedBoostModifier = 1.3f; // 🏃 狂暴杀戮
+        public static float KillRushBoostDuration = 3.0f;
+        public static float HeavyInfantryDamageReduction = 0.15f; // 🎖️ 重装坦克
         public static int HeavyInfantrySpawnArmor = 100;
         public static bool HeavyInfantrySpawnHelmet = true;
-
-        // 12. 🎲 武器大师 (WeaponMaster)
         public static readonly string[] WeaponMasterPrimaryPool = { "weapon_ak47", "weapon_m4a1_silencer", "weapon_awp", "weapon_negev", "weapon_xm1014" };
         public static readonly string[] WeaponMasterSecondaryPool = { "weapon_deagle", "weapon_fiveseven", "weapon_tec9" };
+        public static float BackstabMultiplier = 3.0f; // 🗡️ 小丑背刺
+        public static float BackstabAngle = 60.0f;
+        public static int ExecuteThreshold = 35; // 🎯 死神斩杀
+        public static int IndomitableWillBaseRegen = 1; // 坚韧不拔
+        public static int IndomitableWillMaxRegenBonus = 4;
+        public static float HeadshotMasterHealRatio = 1.0f; // 爆头大师
+        public static int HeadshotMasterRoundStartHealth = 100;
+        // 质变棱彩 (PrismaticChange) 无单独配置参数
 
-        // 13. 💣 自爆卡车 (LastStand)
-        public static float LastStandExplosionRadius = 300f;
-        public static int LastStandMaxExplosionDamage = 100;
-
-        // 14. 🔥 狂徒 (Reckoner)
-        public static float ReckonerRegenDelay = 10.0f;    // 连续无伤 10 秒后开始回血
-        public static int ReckonerRegenPerSecond = 2;       // 每秒回复 2 HP
-        public static float ReckonerRegenCap = 0.8f;       // 最多恢复至 MaxHealth 的 80%
+        // --- 🔮 彩色 (Prismatic) ---
+        public static float SoulOutDuration = 8.0f; // 👻 灵魂出窍
+        public static int SoulOutHealthReward = 50;
+        public static int SoulOutLimitPerRound = 1;
+        public static float GlassCannonDamageMultiplier = 1.5f; // 💥 玻璃大炮
+        public static int GlassCannonMaxHealthLimit = 60;
+        public static float ChronobreakTraceDuration = 3.0f; // ⏳ 时空回溯
+        public static int ChronobreakLimitPerRound = 1;
+        public static float KillerMasterDamageIncreasePerKill = 0.3f; // 👑 我是高手
+        public static float KillerMasterDamageReductionPerKill = 0.03f;
+        public static float KillerMasterMaxDamageReduction = 0.90f;
+        public static float TinySlayerModelScale = 0.7f; // 🛸 巨人杀手
+        public static float TinySlayerSpeedModifier = 1.2f;
+        public static float TinySlayerDamageMultiplier = 1.3f;
+        public static float NoPrimaryDamageMultiplier = 1.5f; // 🚫 回归基本功
+        public static float NoPrimaryLifestealRatio = 0.3f;
+        public static float NoPrimarySpeedBoostModifier = 1.1f;
+        public static int NoPrimarySpawnArmor = 100;
+        public static bool NoPrimarySpawnHelmet = true;
+        public static float GoliathModelScale = 1.3f; // 🌋 歌利亚巨人
+        public static float GoliathHealthMultiplier = 1.5f;
+        public static float GoliathDamageMultiplier = 1.2f;
+        public static float UnluckyContractMaxDamageBonus = 0.5f; // ☠️ 不详契约
+        public static float UnluckyContractMaxSpeedBonus = 0.3f;
+        public static float UnluckyContractMaxLifestealRatio = 0.4f;
+        public static int UnluckyContractSelfDamagePerShot = 1;
     }
 
     public class PlayerStateRecord
@@ -83,80 +96,73 @@ namespace CS2HextechPlugin
     public class CS2HextechPlugin : BasePlugin
     {
         public override string ModuleName => "CS2 Hextech Augment Menu (CenterHtmlMenu)";
-        public override string ModuleVersion => "1.1.0";
+        public override string ModuleVersion => "2.0.0";
         public override string ModuleAuthor => "Antigravity AI";
-        public override string ModuleDescription => "Allows players to choose different Hextech augments in-game via a Center HTML Menu, with all 13 effects and multiple stacking modes implemented.";
+        public override string ModuleDescription => "Hextech plugin with 28 modes and features";
 
-        // 存储每个玩家选择的海克斯效果 (Key: SteamID, Value: HashSet of HexTypes)
         private readonly Dictionary<ulong, HashSet<string>> _playerHextechs = new();
-        // 存储每个玩家本回合已使用的闪现次数 (Key: SteamID, Value: BlinkCount)
-        private readonly Dictionary<ulong, int> _playerBlinksUsed = new();
-        // 存储每个玩家本回合已使用的时空回溯次数 (Key: SteamID, Value: ChronobreakCount)
-        private readonly Dictionary<ulong, int> _playerChronobreaksUsed = new();
-        // 存储每个玩家上一帧按键状态
+        
+        // Use/F key states
         private readonly Dictionary<ulong, PlayerButtons> _lastButtons = new();
-        // 存储每个玩家上一次按下 E 键的时间
         private readonly Dictionary<ulong, DateTime> _lastUseKeyPressTime = new();
-        // 存储每个玩家上一次选择海克斯时的回合数
-        private readonly Dictionary<ulong, int> _playerLastChoiceRound = new();
-        // 存储时空回溯历史记录
-        private readonly Dictionary<ulong, Queue<PlayerStateRecord>> _playerHistory = new();
-        // 存储狂暴杀戮加速状态结束时间
-        private readonly Dictionary<ulong, DateTime> _playerSpeedBoostEndTime = new();
-        // 存储每个玩家最后一次受到伤害的时间（狂徒回血计时用）
-        private readonly Dictionary<ulong, DateTime> _playerLastHurtTime = new();
-        // 存储每个玩家上一次狂徒回血 Tick 的时间（控制每秒频率）
-        private readonly Dictionary<ulong, DateTime> _playerLastRegenTick = new();
+        private readonly Dictionary<ulong, DateTime> _lastLookKeyPressTime = new();
 
-        // 游戏是否已正式开始（结束热身）
+        // Specific Ability Trackers
+        private readonly Dictionary<ulong, int> _playerBlinksUsed = new();
+        private readonly Dictionary<ulong, int> _playerChronobreaksUsed = new();
+        private readonly Dictionary<ulong, int> _playerRoundKills = new();
+        private readonly Dictionary<ulong, Queue<PlayerStateRecord>> _playerHistory = new();
+        private readonly Dictionary<ulong, DateTime> _playerSpeedBoostEndTime = new();
+        
+        // Regen & Bleed
+        private readonly Dictionary<ulong, DateTime> _playerLastHurtTime = new();
+        private readonly Dictionary<ulong, DateTime> _playerLastRegenTick = new();
+        private readonly Dictionary<ulong, DateTime> _playerBleedEndTime = new();
+        private readonly Dictionary<ulong, DateTime> _playerDisableFireEndTime = new();
+        private readonly Dictionary<ulong, DateTime> _playerLastBleedTick = new();
+        private readonly Dictionary<ulong, DateTime> _playerLastIndomitableTick = new();
+        
+        // Grenades
+        private readonly Dictionary<ulong, int> _playerHeThrown = new();
+        private readonly Dictionary<ulong, int> _playerMolotovThrown = new();
+
+        // Soul Out
+        private readonly Dictionary<ulong, bool> _playerIsSoul = new();
+        private readonly Dictionary<ulong, int> _playerSoulUsed = new();
+        private readonly Dictionary<ulong, Vector> _playerSoulBodyPos = new();
+        private readonly Dictionary<ulong, DateTime> _playerSoulEndTime = new();
+
+        private readonly Dictionary<ulong, int> _playerLastChoiceRound = new();
         private bool _isGameStarted = false;
-        // 存储已准备就绪的玩家 SteamID
-        private readonly Dictionary<ulong, bool> _dummyToForceCorrectLineMapping = new(); // Just placeholder for layout
         private readonly HashSet<ulong> _readyPlayers = new();
+
+        private readonly Random _random = new Random();
 
         public override void Load(bool hotReload)
         {
-            Console.WriteLine("[HextechPlugin] 海克斯内战插件加载成功！所有13种技能与模式已就绪！");
+            Console.WriteLine("[HextechPlugin] 28个海克斯能力插件加载成功！");
 
-            // 注册打开菜单指令，玩家在聊天框敲 !hex 或 /hex 即可触发
             AddCommand("css_hex", "打开海克斯效果选择菜单", CommandOpenHexMenu);
-
-            // 注册准备指令
             AddCommand("css_r", "准备游戏", CommandReady);
             AddCommand("css_ready", "准备游戏", CommandReady);
-            // 注册重置房间指令
             AddCommand("css_restart", "重置房间并重新开启准备", CommandRestartRoom);
+            AddCommand("css_hex_reset", "初始化重置服务器状态与海克斯模式", CommandResetServer);
 
-            // 监听玩家复活 (Spawn) 事件，自动为其应用状态或弹出菜单
             RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
-
-            // 监听玩家受伤 (Hurt) 事件，用于实现“吸血鬼”和“棘刺甲壳”效果
             RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
-
-            // 监听玩家死亡 (Death) 事件，用于实现“赏金猎人”、“狂暴杀戮”和“自爆卡车”效果
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
-
-            // 监听回合开始事件，重置单回合限制、轨迹等
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
+            RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
+            RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
+            RegisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
 
-            // 监听聊天事件拦截 .r 消息
             AddCommandListener("say", OnPlayerSay);
             AddCommandListener("say_team", OnPlayerSay);
 
-            // 注册 OnTick 监听器以检测双击 E (Use) 按键、记录 Chronobreak 状态
             RegisterListener<Listeners.OnTick>(OnTick);
-
-            // 注册伤害预处理监听器，实现 GlassCannon, HeavyInfantry, Execute 效果
             RegisterListener<Listeners.OnEntityTakeDamagePre>(OnTakeDamage);
-
-            // 注册 OnMapStart 监听
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
-
-            // 监听玩家退出事件，当玩家数量为0时自动重置服务器
-            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
-
-            // 注册重置命令供RCON/控制台调用并选定模式
-            AddCommand("css_hex_reset", "初始化重置服务器状态与海克斯模式", CommandResetServer);
 
             if (hotReload)
             {
@@ -170,19 +176,17 @@ namespace CS2HextechPlugin
 
         private void OnMapStart(string mapName)
         {
-            ResetHextechServerState(1); // 地图载入默认回到模式 1 并完全初始化
+            ResetHextechServerState(1); 
         }
 
         private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
         {
-            // 延迟 1 秒等待玩家完全移出在线列表
             AddTimer(1.0f, () =>
             {
                 var humanPlayers = Utilities.GetPlayers().Where(p => p != null && p.IsValid && !p.IsBot).ToList();
                 if (humanPlayers.Count == 0)
                 {
-                    Console.WriteLine("[HextechPlugin] 检测到服务器内已无在线人类玩家，自动重置房间状态...");
-                    ResetHextechServerState(1); // 自动重置并恢复默认模式 1
+                    ResetHextechServerState(1); 
                 }
             });
             return HookResult.Continue;
@@ -197,27 +201,14 @@ namespace CS2HextechPlugin
             }
 
             int targetMode = 1;
-            if (commandInfo.ArgCount > 1)
-            {
-                int.TryParse(commandInfo.GetArg(1), out targetMode);
-            }
-
-            if (targetMode != 1 && targetMode != 2)
-            {
-                targetMode = 1;
-            }
+            if (commandInfo.ArgCount > 1) int.TryParse(commandInfo.GetArg(1), out targetMode);
+            if (targetMode != 1 && targetMode != 2) targetMode = 1;
 
             ResetHextechServerState(targetMode);
 
             string msg = $" \x06[准备系统]\x01 服务器已手动重置！当前激活模式：\x04模式 {targetMode}\x01，开始热身！";
-            if (player != null)
-            {
-                player.PrintToChat(msg);
-            }
-            else
-            {
-                Console.WriteLine($"[HextechPlugin] {msg}");
-            }
+            if (player != null) player.PrintToChat(msg);
+            else Console.WriteLine($"[HextechPlugin] {msg}");
         }
 
         private bool AdminManager_IsAdmin(CCSPlayerController player)
@@ -230,66 +221,53 @@ namespace CS2HextechPlugin
             _playerHextechs.Clear();
             _playerBlinksUsed.Clear();
             _playerChronobreaksUsed.Clear();
+            _playerRoundKills.Clear();
             _playerHistory.Clear();
             _playerLastChoiceRound.Clear();
             _playerSpeedBoostEndTime.Clear();
             _playerLastHurtTime.Clear();
             _playerLastRegenTick.Clear();
+            _playerBleedEndTime.Clear();
+            _playerDisableFireEndTime.Clear();
+            _playerHeThrown.Clear();
+            _playerMolotovThrown.Clear();
+            _playerIsSoul.Clear();
+            _playerSoulUsed.Clear();
             _readyPlayers.Clear();
 
             _isGameStarted = false;
             HextechConfig.CoreMode = mode;
 
-            // 强制开始热身
             Server.ExecuteCommand("mp_warmuptime 9999");
             Server.ExecuteCommand("mp_warmup_start");
             Server.ExecuteCommand("mp_restartgame 1");
-
-            Console.WriteLine($"[HextechPlugin] 服务器状态已完全初始化重置。当前海克斯模式：{mode}");
         }
 
         private HookResult OnPlayerSay(CCSPlayerController? player, CommandInfo commandInfo)
         {
-            if (player == null || !player.IsValid || player.IsBot)
-                return HookResult.Continue;
-
+            if (player == null || !player.IsValid || player.IsBot) return HookResult.Continue;
             string text = commandInfo.GetArg(1).Trim();
             
-            // 准备就绪指令
-            if (text.Equals(".r", StringComparison.OrdinalIgnoreCase) || 
-                text.Equals(".ready", StringComparison.OrdinalIgnoreCase) ||
-                text.Equals("!r", StringComparison.OrdinalIgnoreCase) ||
-                text.Equals("!ready", StringComparison.OrdinalIgnoreCase))
+            if (text.Equals(".r", StringComparison.OrdinalIgnoreCase) || text.Equals(".ready", StringComparison.OrdinalIgnoreCase) ||
+                text.Equals("!r", StringComparison.OrdinalIgnoreCase) || text.Equals("!ready", StringComparison.OrdinalIgnoreCase))
             {
                 HandlePlayerReady(player);
-                return HookResult.Handled; // 拦截消息不让公屏刷屏
+                return HookResult.Handled;
             }
 
-            // 在准备/热身阶段，允许通过聊天框切换核心玩法模式
             if (!_isGameStarted)
             {
                 int targetMode = 0;
-                if (text.Equals(".mode 1", StringComparison.OrdinalIgnoreCase) || 
-                    text.Equals("!mode 1", StringComparison.OrdinalIgnoreCase) ||
-                    text.Equals(".m1", StringComparison.OrdinalIgnoreCase))
-                {
-                    targetMode = 1;
-                }
-                else if (text.Equals(".mode 2", StringComparison.OrdinalIgnoreCase) || 
-                         text.Equals("!mode 2", StringComparison.OrdinalIgnoreCase) ||
-                         text.Equals(".m2", StringComparison.OrdinalIgnoreCase))
-                {
-                    targetMode = 2;
-                }
+                if (text.Equals(".mode 1", StringComparison.OrdinalIgnoreCase) || text.Equals("!mode 1", StringComparison.OrdinalIgnoreCase) || text.Equals(".m1", StringComparison.OrdinalIgnoreCase)) targetMode = 1;
+                else if (text.Equals(".mode 2", StringComparison.OrdinalIgnoreCase) || text.Equals("!mode 2", StringComparison.OrdinalIgnoreCase) || text.Equals(".m2", StringComparison.OrdinalIgnoreCase)) targetMode = 2;
 
                 if (targetMode == 1 || targetMode == 2)
                 {
                     ResetHextechServerState(targetMode);
-                    Server.PrintToChatAll($" \x06[准备系统]\x01 玩家 \x04{player.PlayerName}\x01 将核心玩法切换为：\x04模式 {targetMode}\x01（{(targetMode == 1 ? "每回合重新抽卡，不叠加" : "仅在 1,9,17 回合选卡，叠加生效")}）！");
+                    Server.PrintToChatAll($" \x06[准备系统]\x01 玩家 \x04{player.PlayerName}\x01 将核心玩法切换为：\x04模式 {targetMode}\x01！");
                     return HookResult.Handled;
                 }
             }
-
             return HookResult.Continue;
         }
 
@@ -302,7 +280,6 @@ namespace CS2HextechPlugin
         private void CommandRestartRoom(CCSPlayerController? player, CommandInfo commandInfo)
         {
             ResetHextechServerState(HextechConfig.CoreMode);
-
             string executor = player == null ? "服务器控制台" : player.PlayerName;
             Server.PrintToChatAll($" \x02[准备系统]\x01 管理员 \x04{executor}\x01 重置了房间！所有已选海克斯已清除，重新开启准备阶段。");
         }
@@ -315,18 +292,11 @@ namespace CS2HextechPlugin
                 return;
             }
 
-            if (_readyPlayers.Contains(player.SteamID))
-            {
-                player.PrintToChat(" \x06[准备系统]\x01 你已经处于准备就绪状态！");
-                return;
-            }
-
+            if (_readyPlayers.Contains(player.SteamID)) return;
             _readyPlayers.Add(player.SteamID);
 
-            // 获取所有非Bot的活跃玩家 (T=2, CT=3)
             var activePlayers = Utilities.GetPlayers().Where(p => p != null && p.IsValid && !p.IsBot && (p.TeamNum == 2 || p.TeamNum == 3)).ToList();
             int totalNeeded = activePlayers.Count;
-            // 过滤准备人员，防止玩家换队或退服后计数错误
             int readyCount = activePlayers.Count(p => _readyPlayers.Contains(p.SteamID));
 
             Server.PrintToChatAll($" \x06[准备系统]\x01 玩家 \x04{player.PlayerName}\x01 已准备！当前准备人数: \x04{readyCount}/{totalNeeded}\x01");
@@ -365,79 +335,66 @@ namespace CS2HextechPlugin
             return 1;
         }
 
-        /// <summary>
-        /// 玩家聊天输入 !hex 时的命令处理
-        /// </summary>
         private void CommandOpenHexMenu(CCSPlayerController? player, CommandInfo commandInfo)
         {
             if (player == null || !player.IsValid || player.IsBot) return;
-
             if (!_isGameStarted)
             {
                 player.PrintToChat(" \x02[准备系统]\x01 游戏尚未正式开始，热身期间无法选择海克斯！");
                 return;
             }
             
-            // 检查当前回合是否符合选卡规则
             int currentRound = GetCurrentRound();
-            if (HextechConfig.CoreMode == 2)
+            if (HextechConfig.CoreMode == 2 && currentRound != 1 && currentRound != 9 && currentRound != 17)
             {
-                if (currentRound != 1 && currentRound != 9 && currentRound != 17)
-                {
-                    player.PrintToChat(" \x02[海克斯]\x01 当前不是海克斯选择回合（仅在第 1、9、17 回合可选）！");
-                    return;
-                }
+                player.PrintToChat(" \x02[海克斯]\x01 当前不是海克斯选择回合（仅在第 1、9、17 回合可选）！");
+                return;
             }
-
             ShowHextechMenu(player);
         }
 
-        /// <summary>
-        /// 玩家复活事件处理
-        /// </summary>
         private HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
         {
             var player = @event.Userid;
             if (player == null || !player.IsValid || player.IsBot) return HookResult.Continue;
 
-            // 延迟 0.1 秒应用被动属性，并进行模式判定
+            // HeadshotMaster round reset
+            if (HasHextech(player, "HeadshotMaster"))
+            {
+                var pawn = player.PlayerPawn.Value;
+                if (pawn != null && pawn.IsValid)
+                {
+                    pawn.MaxHealth = HextechConfig.HeadshotMasterRoundStartHealth;
+                    pawn.Health = HextechConfig.HeadshotMasterRoundStartHealth;
+                    Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iMaxHealth");
+                    Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+                }
+            }
+
+            _playerIsSoul[player.SteamID] = false; // reset soul out
+            _playerBleedEndTime[player.SteamID] = DateTime.MinValue; // reset bleed
+            _playerDisableFireEndTime[player.SteamID] = DateTime.MinValue; // reset blind
+
             AddTimer(0.1f, () =>
             {
                 if (player == null || !player.IsValid) return;
-
-                // 如果游戏尚未正式开始，则在热身期间不发放海克斯
                 if (!_isGameStarted) return;
 
                 int currentRound = GetCurrentRound();
-
-                // 初始化或清除
-                if (!_playerHextechs.ContainsKey(player.SteamID))
-                {
-                    _playerHextechs[player.SteamID] = new HashSet<string>();
-                }
+                if (!_playerHextechs.ContainsKey(player.SteamID)) _playerHextechs[player.SteamID] = new HashSet<string>();
 
                 if (HextechConfig.CoreMode == 1)
                 {
-                    // 模式 1：每回合重新抽取，不叠加。所以每次复活清空历史，重新抽取
                     _playerHextechs[player.SteamID].Clear();
-                    // 延迟 1.5 秒避开黑屏，弹出菜单
                     AddTimer(1.4f, () => ShowHextechMenu(player));
                 }
                 else if (HextechConfig.CoreMode == 2)
                 {
-                    // 模式 2：仅在 1, 9, 17 回合抽取。
-                    // 重新应用已叠加的全部被动效果
                     ReapplyActiveHextechs(player);
-
                     if (currentRound == 1 || currentRound == 9 || currentRound == 17)
                     {
-                        // 检查当前选卡轮次是否已选
                         _playerLastChoiceRound.TryGetValue(player.SteamID, out var lastRound);
-                        if (lastRound != currentRound)
-                        {
-                            // 还没选，弹出菜单
-                            AddTimer(1.4f, () => ShowHextechMenu(player));
-                        }
+                        if (lastRound != currentRound) AddTimer(1.4f, () => ShowHextechMenu(player));
                     }
                 }
             });
@@ -445,86 +402,168 @@ namespace CS2HextechPlugin
             return HookResult.Continue;
         }
 
-        /// <summary>
-        /// 重新应用某个玩家已拥有的所有海克斯被动属性
-        /// </summary>
         private void ReapplyActiveHextechs(CCSPlayerController player)
         {
             if (player == null || !player.IsValid) return;
             var pawn = player.PlayerPawn.Value;
             if (pawn == null || !pawn.IsValid) return;
 
-            // 1. 基础重置
             pawn.MaxHealth = 100;
             pawn.VelocityModifier = 1.0f;
-            Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iMaxHealth");
-            Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+            pawn.m_flModelScale = 1.0f; 
 
-            // 2. 检查是否有泰坦之躯与玻璃大炮的生命值逻辑
             bool hasTitan = HasHextech(player, "Titan");
             bool hasGlass = HasHextech(player, "GlassCannon");
+            bool hasGoliath = HasHextech(player, "Goliath");
 
             int targetMaxHp = 100;
-            if (hasTitan) targetMaxHp = HextechConfig.TitanMaxHealth; // 200
-            if (hasGlass) targetMaxHp = HextechConfig.GlassCannonMaxHealthLimit; // 60 覆盖
+            if (hasTitan) targetMaxHp = HextechConfig.TitanMaxHealth; 
+            if (hasGlass) targetMaxHp = HextechConfig.GlassCannonMaxHealthLimit; 
+            if (hasGoliath) targetMaxHp = (int)(targetMaxHp * HextechConfig.GoliathHealthMultiplier);
 
             pawn.MaxHealth = targetMaxHp;
             pawn.Health = targetMaxHp;
+            
             Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iMaxHealth");
             Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
 
-            // 3. 风行者速度逻辑
-            bool hasSpeed = HasHextech(player, "Speed");
-            pawn.VelocityModifier = hasSpeed ? HextechConfig.SpeedModifier : 1.0f;
+            float speedMod = 1.0f;
+            if (HasHextech(player, "Speed")) speedMod = Math.Max(speedMod, HextechConfig.SpeedModifier);
+            if (HasHextech(player, "TinySlayer")) speedMod = Math.Max(speedMod, HextechConfig.TinySlayerSpeedModifier);
+            if (HasHextech(player, "NoPrimary")) speedMod = Math.Max(speedMod, HextechConfig.NoPrimarySpeedBoostModifier);
+            pawn.VelocityModifier = speedMod;
 
-            // 4. 重装坦克与武器大师防弹衣逻辑
-            bool hasHeavy = HasHextech(player, "HeavyInfantry");
-            bool hasWeapon = HasHextech(player, "WeaponMaster");
+            if (HasHextech(player, "TinySlayer")) pawn.m_flModelScale = HextechConfig.TinySlayerModelScale;
+            if (HasHextech(player, "Goliath")) pawn.m_flModelScale = HextechConfig.GoliathModelScale;
 
-            if (hasHeavy || hasWeapon)
+            if (HasHextech(player, "HeavyInfantry") || HasHextech(player, "WeaponMaster") || HasHextech(player, "NoPrimary"))
             {
-                player.GiveNamedItem("item_assaultsuit"); // 赠送防弹衣与头盔
+                player.GiveNamedItem("item_assaultsuit");
             }
 
-            // 5. 武器大师随机武器赠送逻辑
-            if (hasWeapon)
-            {
-                ApplyWeaponMaster(player);
-            }
+            if (HasHextech(player, "WeaponMaster")) ApplyWeaponMaster(player);
         }
 
-        /// <summary>
-        /// 伤害发生时的回调 (Vampire, Thorns, Reckoner)
-        /// </summary>
+        private HookResult OnWeaponFire(EventWeaponFire @event, GameEventInfo info)
+        {
+            var player = @event.Userid;
+            if (player != null && player.IsValid && player.PawnIsAlive && !player.IsBot && HasHextech(player, "UnluckyContract"))
+            {
+                var pawn = player.PlayerPawn.Value;
+                if (pawn != null && pawn.Health > HextechConfig.UnluckyContractSelfDamagePerShot) // keep at least 1 HP
+                {
+                    pawn.Health -= HextechConfig.UnluckyContractSelfDamagePerShot;
+                    Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+                }
+            }
+            return HookResult.Continue;
+        }
+
+        private HookResult OnGrenadeThrown(EventGrenadeThrown @event, GameEventInfo info)
+        {
+            var player = @event.Userid;
+            if (player != null && player.IsValid && !player.IsBot && HasHextech(player, "GrenadeMaster"))
+            {
+                string weapon = @event.Weapon;
+                if (weapon.Contains("hegrenade"))
+                {
+                    _playerHeThrown.TryGetValue(player.SteamID, out int heCount);
+                    if (heCount < HextechConfig.GrenadeMasterMaxHegrenadeCount - 1)
+                    {
+                        AddTimer(0.1f, () => player.GiveNamedItem("weapon_hegrenade"));
+                        _playerHeThrown[player.SteamID] = heCount + 1;
+                    }
+                }
+                else if (weapon.Contains("molotov") || weapon.Contains("incgrenade"))
+                {
+                    _playerMolotovThrown.TryGetValue(player.SteamID, out int molCount);
+                    if (molCount < HextechConfig.GrenadeMasterMaxMolotovCount - 1)
+                    {
+                        AddTimer(0.1f, () => player.GiveNamedItem(weapon)); // give back exact item thrown
+                        _playerMolotovThrown[player.SteamID] = molCount + 1;
+                    }
+                }
+            }
+            return HookResult.Continue;
+        }
+
+        private HookResult OnPlayerBlind(EventPlayerBlind @event, GameEventInfo info)
+        {
+            var victim = @event.Userid;
+            var attacker = @event.Attacker;
+            if (attacker != null && attacker.IsValid && !attacker.IsBot && HasHextech(attacker, "FlashMagic"))
+            {
+                if (victim != null && victim.IsValid)
+                {
+                    _playerDisableFireEndTime[victim.SteamID] = DateTime.Now.AddSeconds(HextechConfig.FlashMagicDisableFireDuration);
+                }
+            }
+            return HookResult.Continue;
+        }
+
         private HookResult OnPlayerHurt(EventPlayerHurt @event, GameEventInfo info)
         {
             var victimPlayer = @event.Userid;
             var attackerPlayer = @event.Attacker;
             var dmg = @event.DmgHealth;
 
-            // 1. Vampire (伤害转化回血)
             if (attackerPlayer != null && attackerPlayer.IsValid && !attackerPlayer.IsBot)
             {
-                if (HasHextech(attackerPlayer, "Vampire"))
+                // Vampire & NoPrimary & UnluckyContract Lifesteal
+                float totalLifesteal = 0;
+                if (HasHextech(attackerPlayer, "Vampire")) totalLifesteal += HextechConfig.VampireRatio;
+                if (HasHextech(attackerPlayer, "NoPrimary")) totalLifesteal += HextechConfig.NoPrimaryLifestealRatio;
+                if (HasHextech(attackerPlayer, "UnluckyContract"))
+                {
+                    var p = attackerPlayer.PlayerPawn.Value;
+                    if (p != null)
+                    {
+                        float loss = (p.MaxHealth - p.Health) / (float)p.MaxHealth;
+                        if (loss < 0) loss = 0;
+                        totalLifesteal += loss * HextechConfig.UnluckyContractMaxLifestealRatio;
+                    }
+                }
+
+                if (totalLifesteal > 0 && dmg > 0)
                 {
                     var attackerPawn = attackerPlayer.PlayerPawn.Value;
-                    if (attackerPawn != null && attackerPawn.IsValid && dmg > 0)
+                    if (attackerPawn != null && attackerPawn.IsValid)
                     {
-                        int healAmount = (int)(dmg * HextechConfig.VampireRatio);
+                        int healAmount = (int)(dmg * totalLifesteal);
                         if (healAmount > 0)
                         {
                             int newHealth = Math.Min(attackerPawn.MaxHealth, attackerPawn.Health + healAmount);
                             attackerPawn.Health = newHealth;
                             Utilities.SetStateChanged(attackerPawn, "CBaseEntity", "m_iHealth");
-                            attackerPlayer.PrintToChat($" \x06[海克斯·吸血]\x01 成功恢复了 \x04{healAmount} HP\x01！");
                         }
                     }
                 }
+                
+                // HeadshotMaster Heal
+                if (HasHextech(attackerPlayer, "HeadshotMaster") && @event.Hitgroup == 1) // 1 = Head
+                {
+                    var attackerPawn = attackerPlayer.PlayerPawn.Value;
+                    if (attackerPawn != null && attackerPawn.IsValid)
+                    {
+                        int healAmount = (int)(dmg * HextechConfig.HeadshotMasterHealRatio);
+                        if (healAmount > 0)
+                        {
+                            attackerPawn.Health += healAmount; // No max cap!
+                            Utilities.SetStateChanged(attackerPawn, "CBaseEntity", "m_iHealth");
+                        }
+                    }
+                }
+
+                // Bleed Apply
+                if (HasHextech(attackerPlayer, "Bleed") && victimPlayer != null && victimPlayer.IsValid)
+                {
+                    _playerBleedEndTime[victimPlayer.SteamID] = DateTime.Now.AddSeconds(HextechConfig.BleedDuration);
+                }
             }
 
-            // 2. Thorns (反弹受到伤害)
             if (victimPlayer != null && victimPlayer.IsValid && !victimPlayer.IsBot)
             {
+                // Thorns
                 if (HasHextech(victimPlayer, "Thorns") && attackerPlayer != null && attackerPlayer.IsValid && !attackerPlayer.IsBot)
                 {
                     var attackerPawn = attackerPlayer.PlayerPawn.Value;
@@ -535,12 +574,11 @@ namespace CS2HextechPlugin
                         {
                             attackerPawn.Health = Math.Max(0, attackerPawn.Health - reflectDmg);
                             Utilities.SetStateChanged(attackerPawn, "CBaseEntity", "m_iHealth");
-                            attackerPlayer.PrintToChat($" \x06[海克斯·棘刺]\x01 你受到了来自棘刺的反弹伤害 \x02{reflectDmg}\x01 HP！");
                         }
                     }
                 }
 
-                // 3. Reckoner (狂徒：任何受到伤害都重置无伤计时器)
+                // Reckoner Reset
                 if (HasHextech(victimPlayer, "Reckoner") && dmg > 0)
                 {
                     _playerLastHurtTime[victimPlayer.SteamID] = DateTime.Now;
@@ -550,9 +588,6 @@ namespace CS2HextechPlugin
             return HookResult.Continue;
         }
 
-        /// <summary>
-        /// 伤害预处理回调 (GlassCannon, HeavyInfantry, Execute)
-        /// </summary>
         private HookResult OnTakeDamage(CEntityInstance entity, CTakeDamageInfo info)
         {
             if (entity == null || !entity.IsValid) return HookResult.Continue;
@@ -560,10 +595,21 @@ namespace CS2HextechPlugin
 
             var victimPlayer = victimPawn.Controller.Value as CCSPlayerController;
             var attackerEntity = info.Attacker.Value;
+            var attackerPlayer = GetPlayerFromEntity(attackerEntity);
+
+            // Soul Out Damage Prevent
+            if (victimPlayer != null && victimPlayer.IsValid)
+            {
+                if (_playerIsSoul.TryGetValue(victimPlayer.SteamID, out bool isSoul) && isSoul)
+                {
+                    info.Damage = 0; // Soul takes no damage
+                    return HookResult.Changed;
+                }
+            }
 
             bool damageChanged = false;
 
-            // 1. HeavyInfantry (受击伤害减免 15%)
+            // Defensive mods
             if (victimPlayer != null && victimPlayer.IsValid && !victimPlayer.IsBot)
             {
                 if (HasHextech(victimPlayer, "HeavyInfantry"))
@@ -571,55 +617,92 @@ namespace CS2HextechPlugin
                     info.Damage *= (1.0f - HextechConfig.HeavyInfantryDamageReduction);
                     damageChanged = true;
                 }
+                if (HasHextech(victimPlayer, "KillerMaster"))
+                {
+                    _playerRoundKills.TryGetValue(victimPlayer.SteamID, out int kills);
+                    float defRatio = Math.Min(HextechConfig.KillerMasterMaxDamageReduction, HextechConfig.KillerMasterDamageReductionPerKill * kills);
+                    info.Damage *= (1.0f - defRatio);
+                    damageChanged = true;
+                }
             }
 
-            // 2. 攻击者相关效果
-            var attackerPlayer = GetPlayerFromEntity(attackerEntity);
+            // Offensive mods
             if (attackerPlayer != null && attackerPlayer.IsValid && !attackerPlayer.IsBot)
             {
-                // 玻璃大炮 (伤害提升 50%)
-                if (HasHextech(attackerPlayer, "GlassCannon"))
+                if (_playerIsSoul.TryGetValue(attackerPlayer.SteamID, out bool isSoulAttacker) && isSoulAttacker)
                 {
-                    info.Damage *= HextechConfig.GlassCannonDamageMultiplier;
+                    info.Damage = 0; // Soul deals no damage
+                    return HookResult.Changed;
+                }
+
+                float dmgMult = 1.0f;
+                if (HasHextech(attackerPlayer, "GlassCannon")) dmgMult *= HextechConfig.GlassCannonDamageMultiplier;
+                if (HasHextech(attackerPlayer, "TinySlayer")) dmgMult *= HextechConfig.TinySlayerDamageMultiplier;
+                if (HasHextech(attackerPlayer, "NoPrimary")) dmgMult *= HextechConfig.NoPrimaryDamageMultiplier;
+                if (HasHextech(attackerPlayer, "Goliath")) dmgMult *= HextechConfig.GoliathDamageMultiplier;
+                
+                if (HasHextech(attackerPlayer, "KillerMaster"))
+                {
+                    _playerRoundKills.TryGetValue(attackerPlayer.SteamID, out int kills);
+                    dmgMult *= (1.0f + HextechConfig.KillerMasterDamageIncreasePerKill * kills);
+                }
+
+                if (HasHextech(attackerPlayer, "UnluckyContract"))
+                {
+                    var p = attackerPlayer.PlayerPawn.Value;
+                    if (p != null)
+                    {
+                        float loss = (p.MaxHealth - p.Health) / (float)p.MaxHealth;
+                        if (loss < 0) loss = 0;
+                        dmgMult *= (1.0f + loss * HextechConfig.UnluckyContractMaxDamageBonus);
+                    }
+                }
+
+                // Backstab
+                if (HasHextech(attackerPlayer, "Backstab"))
+                {
+                    var apawn = attackerPlayer.PlayerPawn.Value;
+                    if (apawn != null)
+                    {
+                        float deltaYaw = Math.Abs(apawn.EyeAngles.Y - victimPawn.EyeAngles.Y);
+                        if (deltaYaw > 180) deltaYaw = 360 - deltaYaw;
+                        if (deltaYaw <= HextechConfig.BackstabAngle)
+                        {
+                            dmgMult *= HextechConfig.BackstabMultiplier;
+                        }
+                    }
+                }
+
+                if (dmgMult != 1.0f)
+                {
+                    info.Damage *= dmgMult;
                     damageChanged = true;
                 }
 
-                // 死神斩杀 (目标低于 35 HP 强力斩杀)
                 if (HasHextech(attackerPlayer, "Execute") && victimPawn.Health < HextechConfig.ExecuteThreshold)
                 {
-                    info.Damage = victimPawn.Health + 100.0f; // 确保秒杀
+                    info.Damage = victimPawn.Health + 100.0f; 
                     damageChanged = true;
-                    attackerPlayer.PrintToChat(" \x06[海克斯·斩杀]\x01 [死神斩杀] 目标生命值低于 35 HP，已强力斩杀！");
                 }
             }
 
             return damageChanged ? HookResult.Changed : HookResult.Continue;
         }
 
-        /// <summary>
-        /// 玩家死亡事件 (Bounty, KillRush, LastStand)
-        /// </summary>
         private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
         {
-            var attacker = @event.Attacker; // 击杀者
-            var victim = @event.Userid;     // 死亡者
-
-            // 1. 击杀者奖励逻辑
+            var attacker = @event.Attacker; 
+            var victim = @event.Userid;     
+            
             if (attacker != null && attacker.IsValid && !attacker.IsBot)
             {
-                // Bounty (赏金猎人)
                 if (HasHextech(attacker, "Bounty"))
                 {
                     var moneyServices = attacker.InGameMoneyServices;
-                    if (moneyServices != null)
-                    {
-                        moneyServices.Account += HextechConfig.BountyKillReward;
-                    }
+                    if (moneyServices != null) moneyServices.Account += HextechConfig.BountyKillReward;
                     attacker.GiveNamedItem(HextechConfig.BountyRefreshWeapon);
-                    attacker.PrintToChat($" \x06[海克斯·赏金]\x01 击杀成功！额外获得 \x04${HextechConfig.BountyKillReward} 现金\x01 并已刷新 \x05电击枪\x01！");
                 }
 
-                // KillRush (狂暴杀戮：击杀后加速)
                 if (HasHextech(attacker, "KillRush"))
                 {
                     var attackerPawn = attacker.PlayerPawn.Value;
@@ -627,14 +710,11 @@ namespace CS2HextechPlugin
                     {
                         attackerPawn.VelocityModifier = HextechConfig.KillRushSpeedBoostModifier;
                         _playerSpeedBoostEndTime[attacker.SteamID] = DateTime.Now.AddSeconds(HextechConfig.KillRushBoostDuration);
-
                         AddTimer(HextechConfig.KillRushBoostDuration, () =>
                         {
                             if (attacker == null || !attacker.IsValid) return;
                             var p = attacker.PlayerPawn.Value;
                             if (p == null || !p.IsValid) return;
-
-                            // 如果在此期间没有拿到新的击杀（即结束时间没被更新），则恢复原速度
                             if (DateTime.Now >= _playerSpeedBoostEndTime.GetValueOrDefault(attacker.SteamID, DateTime.MinValue))
                             {
                                 p.VelocityModifier = HasHextech(attacker, "Speed") ? HextechConfig.SpeedModifier : 1.0f;
@@ -642,9 +722,15 @@ namespace CS2HextechPlugin
                         });
                     }
                 }
+                
+                // KillerMaster Kill Count
+                if (HasHextech(attacker, "KillerMaster"))
+                {
+                    _playerRoundKills.TryGetValue(attacker.SteamID, out int kills);
+                    _playerRoundKills[attacker.SteamID] = kills + 1;
+                }
             }
 
-            // 2. 死亡者自爆逻辑 (LastStand)
             if (victim != null && victim.IsValid && !victim.IsBot)
             {
                 if (HasHextech(victim, "LastStand"))
@@ -653,26 +739,19 @@ namespace CS2HextechPlugin
                     if (victimPawn != null && victimPawn.IsValid)
                     {
                         var origin = victimPawn.AbsOrigin;
-                        if (origin != null)
-                        {
-                            TriggerLastStandExplosion(victim, origin);
-                        }
+                        if (origin != null) TriggerLastStandExplosion(victim, origin);
                     }
                 }
             }
-
             return HookResult.Continue;
         }
 
-        /// <summary>
-        /// 自爆卡车爆炸中心逻辑
-        /// </summary>
         private void TriggerLastStandExplosion(CCSPlayerController victim, Vector explosionPos)
         {
             foreach (var target in Utilities.GetPlayers())
             {
                 if (target == null || !target.IsValid || target.IsBot || !target.PawnIsAlive) continue;
-                if (target.TeamNum == victim.TeamNum || target.TeamNum <= 1) continue; // 仅敌方
+                if (target.TeamNum == victim.TeamNum || target.TeamNum <= 1) continue; 
 
                 var pawn = target.PlayerPawn.Value;
                 if (pawn == null || !pawn.IsValid) continue;
@@ -687,30 +766,27 @@ namespace CS2HextechPlugin
 
                 if (dist <= HextechConfig.LastStandExplosionRadius)
                 {
-                    // 距离衰减伤害
                     int dmg = (int)MathF.Max(0, (1.0f - (dist / HextechConfig.LastStandExplosionRadius)) * HextechConfig.LastStandMaxExplosionDamage);
                     if (dmg > 0)
                     {
                         pawn.Health = Math.Max(0, pawn.Health - dmg);
                         Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
-
-                        victim.PrintToChat($" \x06[自爆卡车]\x01 死亡引发了爆炸，对敌方 \x02{target.PlayerName}\x01 造成了 \x02{dmg}\x01 HP 的爆炸伤害！");
-                        target.PrintToChat($" \x06[自爆卡车]\x01 敌人在你身边自爆，你受到了 \x02{dmg}\x01 HP 的爆炸伤害！");
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// 监听回合开始，重置闪现、回溯限制
-        /// </summary>
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
         {
             _playerBlinksUsed.Clear();
             _playerChronobreaksUsed.Clear();
+            _playerRoundKills.Clear();
             _playerHistory.Clear();
+            _playerHeThrown.Clear();
+            _playerMolotovThrown.Clear();
+            _playerSoulUsed.Clear();
+            _playerIsSoul.Clear();
 
-            // 如果游戏未开启，确保强制保持在热身状态
             var gameRulesProxy = Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").FirstOrDefault();
             if (gameRulesProxy != null && gameRulesProxy.GameRules != null && !gameRulesProxy.GameRules.WarmupPeriod && !_isGameStarted)
             {
@@ -720,39 +796,13 @@ namespace CS2HextechPlugin
             return HookResult.Continue;
         }
 
-        /// <summary>
-        /// 闪现控制台/公屏聊天指令
-        /// </summary>
-        [ConsoleCommand("css_blink", "闪现星使：瞬间向前传送 4 米")]
-        public void OnBlinkCommand(CCSPlayerController? player, CommandInfo info)
-        {
-            if (player == null || !player.IsValid) return;
-            TriggerBlink(player);
-        }
-
-        /// <summary>
-        /// 闪现逻辑
-        /// </summary>
         private void TriggerBlink(CCSPlayerController player)
         {
-            if (!player.PawnIsAlive)
-            {
-                player.PrintToChat(" \x02[闪现系统]\x01 你必须存活时才能使用闪现！");
-                return;
-            }
-
-            if (!HasHextech(player, "Blink"))
-            {
-                player.PrintToChat(" \x02[闪现系统]\x01 你本局没有选择【闪现星使】海克斯！");
-                return;
-            }
+            if (!player.PawnIsAlive) return;
+            if (!HasHextech(player, "Blink")) return;
 
             _playerBlinksUsed.TryGetValue(player.SteamID, out var used);
-            if (used >= HextechConfig.BlinkLimitPerRound)
-            {
-                player.PrintToChat($" \x02[闪现系统]\x01 本回合你的闪现次数已用完（限 {HextechConfig.BlinkLimitPerRound} 次）！");
-                return;
-            }
+            if (used >= HextechConfig.BlinkLimitPerRound) return;
 
             var pawn = player.PlayerPawn.Value;
             if (pawn == null || !pawn.IsValid) return;
@@ -765,72 +815,57 @@ namespace CS2HextechPlugin
             float forwardX = MathF.Cos(yawRad);
             float forwardY = MathF.Sin(yawRad);
 
-            var newPosition = new Vector(
-                origin.X + (forwardX * HextechConfig.BlinkDistance),
-                origin.Y + (forwardY * HextechConfig.BlinkDistance),
-                origin.Z + 10f // 稍微抬高避免卡死
-            );
-
+            var newPosition = new Vector(origin.X + (forwardX * HextechConfig.BlinkDistance), origin.Y + (forwardY * HextechConfig.BlinkDistance), origin.Z + 10f);
             pawn.Teleport(newPosition, null, null);
             _playerBlinksUsed[player.SteamID] = used + 1;
-            player.PrintToChat($" \x06[闪现系统]\x01 闪现成功！本回合还剩 \x04{HextechConfig.BlinkLimitPerRound - (used + 1)}\x01 次。");
         }
 
-        /// <summary>
-        /// 时空回溯折跃逻辑
-        /// </summary>
         private void TriggerChronobreak(CCSPlayerController player)
         {
-            if (!player.PawnIsAlive)
-            {
-                player.PrintToChat(" \x02[时空回溯]\x01 你必须存活时才能使用时空回溯！");
-                return;
-            }
-
-            if (!HasHextech(player, "Chronobreak"))
-            {
-                player.PrintToChat(" \x02[时空回溯]\x01 你本局没有选择【时空回溯】海克斯！");
-                return;
-            }
+            if (!player.PawnIsAlive) return;
+            if (!HasHextech(player, "Chronobreak")) return;
 
             _playerChronobreaksUsed.TryGetValue(player.SteamID, out var used);
-            if (used >= HextechConfig.ChronobreakLimitPerRound)
-            {
-                player.PrintToChat($" \x02[时空回溯]\x01 本回合你的时空回溯次数已用完（限 {HextechConfig.ChronobreakLimitPerRound} 次）！");
-                return;
-            }
+            if (used >= HextechConfig.ChronobreakLimitPerRound) return;
 
             var pawn = player.PlayerPawn.Value;
             if (pawn == null || !pawn.IsValid) return;
 
-            // 查找 3 秒前的状态记录
-            if (!_playerHistory.TryGetValue(player.SteamID, out var history) || history.Count == 0)
-            {
-                player.PrintToChat(" \x02[时空回溯]\x01 没有找到足够的时空轨迹记录！");
-                return;
-            }
-
-            // 检查历史记录最老的点是否足够久远（至少 2.5 秒前）
+            if (!_playerHistory.TryGetValue(player.SteamID, out var history) || history.Count == 0) return;
             double age = (DateTime.Now - history.Peek().Time).TotalSeconds;
-            if (age < 2.5)
-            {
-                player.PrintToChat(" \x02[时空回溯]\x01 没有找到足够的时空轨迹记录！");
-                return;
-            }
+            if (age < 2.5) return;
 
-            // 折跃回 3 秒前的状态
             var oldState = history.Peek();
             pawn.Teleport(oldState.Position, null, null);
             pawn.Health = oldState.Health;
             Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
 
             _playerChronobreaksUsed[player.SteamID] = used + 1;
-            player.PrintToChat(" \x06[时空回溯]\x01 时空折跃成功！你已回到 3 秒前的状态！");
         }
 
-        /// <summary>
-        /// 每 Tick 执行按键判定、时空记录等
-        /// </summary>
+        private void TriggerSoulOut(CCSPlayerController player)
+        {
+            if (!player.PawnIsAlive) return;
+            if (!HasHextech(player, "SoulOut")) return;
+            
+            _playerSoulUsed.TryGetValue(player.SteamID, out var used);
+            if (used >= HextechConfig.SoulOutLimitPerRound) return;
+
+            var pawn = player.PlayerPawn.Value;
+            if (pawn == null || !pawn.IsValid) return;
+
+            _playerIsSoul[player.SteamID] = true;
+            _playerSoulUsed[player.SteamID] = used + 1;
+            _playerSoulBodyPos[player.SteamID] = new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z);
+            
+            // Render invisible/color
+            pawn.Render = System.Drawing.Color.FromArgb(0, 255, 255, 255); // Alpha 0
+            Utilities.SetStateChanged(pawn, "CBaseModelEntity", "m_clrRender");
+            
+            _playerSoulEndTime[player.SteamID] = DateTime.Now.AddSeconds(HextechConfig.SoulOutDuration);
+            player.PrintToChat(" \x06[海克斯]\x01 已化为灵魂！");
+        }
+
         private void OnTick()
         {
             foreach (var player in Utilities.GetPlayers())
@@ -840,7 +875,100 @@ namespace CS2HextechPlugin
                 var pawn = player.PlayerPawn.Value;
                 if (pawn == null || !pawn.IsValid) continue;
 
-                // 1. 处理 Chronobreak 轨迹记录
+                // Bleed effect
+                if (player.PawnIsAlive)
+                {
+                    if (_playerBleedEndTime.TryGetValue(player.SteamID, out var bleedEnd) && DateTime.Now < bleedEnd)
+                    {
+                        _playerLastBleedTick.TryGetValue(player.SteamID, out var lastBleed);
+                        if ((DateTime.Now - lastBleed).TotalSeconds >= 1.0)
+                        {
+                            pawn.Health = Math.Max(0, pawn.Health - HextechConfig.BleedDamage);
+                            Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+                            _playerLastBleedTick[player.SteamID] = DateTime.Now;
+                        }
+                    }
+                }
+                
+                // Indomitable Will effect
+                if (player.PawnIsAlive && HasHextech(player, "IndomitableWill"))
+                {
+                    _playerLastIndomitableTick.TryGetValue(player.SteamID, out var lastIndom);
+                    if ((DateTime.Now - lastIndom).TotalSeconds >= 1.0)
+                    {
+                        if (pawn.Health < pawn.MaxHealth)
+                        {
+                            float loss = (pawn.MaxHealth - pawn.Health) / (float)pawn.MaxHealth;
+                            if (loss < 0) loss = 0;
+                            int regen = HextechConfig.IndomitableWillBaseRegen + (int)(loss * HextechConfig.IndomitableWillMaxRegenBonus);
+                            pawn.Health = Math.Min(pawn.MaxHealth, pawn.Health + regen);
+                            Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+                        }
+                        _playerLastIndomitableTick[player.SteamID] = DateTime.Now;
+                    }
+                }
+
+                // FlashMagic (Disable fire)
+                if (player.PawnIsAlive)
+                {
+                    if (_playerDisableFireEndTime.TryGetValue(player.SteamID, out var fireEnd) && DateTime.Now < fireEnd)
+                    {
+                        player.Buttons &= ~PlayerButtons.Attack;
+                        player.Buttons &= ~PlayerButtons.Attack2;
+                    }
+                }
+
+                // UnluckyContract Speed Bonus
+                if (player.PawnIsAlive && HasHextech(player, "UnluckyContract"))
+                {
+                    float loss = (pawn.MaxHealth - pawn.Health) / (float)pawn.MaxHealth;
+                    if (loss < 0) loss = 0;
+                    pawn.VelocityModifier = 1.0f + (loss * HextechConfig.UnluckyContractMaxSpeedBonus);
+                }
+
+                // SoulOut End Check
+                if (player.PawnIsAlive && _playerIsSoul.TryGetValue(player.SteamID, out bool isSoul) && isSoul)
+                {
+                    if (DateTime.Now >= _playerSoulEndTime[player.SteamID])
+                    {
+                        _playerIsSoul[player.SteamID] = false;
+                        pawn.Render = System.Drawing.Color.FromArgb(255, 255, 255, 255); // Restore alpha
+                        Utilities.SetStateChanged(pawn, "CBaseModelEntity", "m_clrRender");
+                        
+                        if (_playerSoulBodyPos.TryGetValue(player.SteamID, out var pos))
+                        {
+                            pawn.Teleport(pos, null, null);
+                        }
+                        pawn.Health = Math.Min(pawn.MaxHealth, pawn.Health + HextechConfig.SoulOutHealthReward);
+                        Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
+                        player.PrintToChat(" \x06[海克斯]\x01 灵魂持续时间结束，已重置肉身！");
+                    }
+                }
+                
+                // NoPrimary Weapon Strip
+                if (player.PawnIsAlive && HasHextech(player, "NoPrimary"))
+                {
+                    var weaponServices = pawn.WeaponServices;
+                    if (weaponServices != null)
+                    {
+                        foreach (var weapon in weaponServices.MyWeapons)
+                        {
+                            if (weapon != null && weapon.IsValid && weapon.Value != null && weapon.Value.IsValid)
+                            {
+                                string wname = weapon.Value.DesignerName ?? "";
+                                if (wname.Contains("ak47") || wname.Contains("m4a1") || wname.Contains("awp") || 
+                                    wname.Contains("negev") || wname.Contains("xm1014") || wname.Contains("mac10") || 
+                                    wname.Contains("mp9") || wname.Contains("galil") || wname.Contains("famas") || wname.Contains("aug") || wname.Contains("sg556"))
+                                {
+                                    pawn.RemovePlayerItem(weapon.Value);
+                                    weapon.Value.Remove();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Chronobreak History
                 if (player.PawnIsAlive && HasHextech(player, "Chronobreak"))
                 {
                     var steamId = player.SteamID;
@@ -849,33 +977,20 @@ namespace CS2HextechPlugin
                         history = new Queue<PlayerStateRecord>();
                         _playerHistory[steamId] = history;
                     }
-
-                    history.Enqueue(new PlayerStateRecord
-                    {
-                        Time = DateTime.Now,
-                        Health = pawn.Health,
-                        Position = new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z)
-                    });
-
-                    // 剪枝 3 秒外的旧记录（保留队列头部最靠近 3 秒前的一点）
+                    history.Enqueue(new PlayerStateRecord { Time = DateTime.Now, Health = pawn.Health, Position = new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z) });
                     var cutoff = DateTime.Now.AddSeconds(-HextechConfig.ChronobreakTraceDuration);
-                    while (history.Count > 1 && history.ElementAt(1).Time < cutoff)
-                    {
-                        history.Dequeue();
-                    }
+                    while (history.Count > 1 && history.ElementAt(1).Time < cutoff) history.Dequeue();
                 }
 
-                // 2. 狂徒 (Reckoner) 自动回血逻辑
+                // Reckoner
                 if (player.PawnIsAlive && HasHextech(player, "Reckoner"))
                 {
                     _playerLastHurtTime.TryGetValue(player.SteamID, out var lastHurt);
                     double secondsSinceHurt = (DateTime.Now - lastHurt).TotalSeconds;
-
                     if (secondsSinceHurt >= HextechConfig.ReckonerRegenDelay)
                     {
                         _playerLastRegenTick.TryGetValue(player.SteamID, out var lastRegen);
                         double secondsSinceRegen = (DateTime.Now - lastRegen).TotalSeconds;
-
                         if (secondsSinceRegen >= 1.0)
                         {
                             int regenCap = (int)(pawn.MaxHealth * HextechConfig.ReckonerRegenCap);
@@ -889,76 +1004,51 @@ namespace CS2HextechPlugin
                     }
                 }
 
-                // 3. 双击 E 键按键状态判定
+                // Buttons Double Click Detection
                 var currentButtons = player.Buttons;
                 _lastButtons.TryGetValue(player.SteamID, out var previousButtons);
 
-                bool isUsePressedThisTick = (currentButtons & PlayerButtons.Use) != 0;
-                bool wasUsePressedLastTick = (previousButtons & PlayerButtons.Use) != 0;
-
-                if (isUsePressedThisTick && !wasUsePressedLastTick)
+                // E Key (Use)
+                if ((currentButtons & PlayerButtons.Use) != 0 && (previousButtons & PlayerButtons.Use) == 0)
                 {
-                    OnUseKeyDown(player);
+                    var now = DateTime.Now;
+                    _lastUseKeyPressTime.TryGetValue(player.SteamID, out var lastPress);
+                    if ((now - lastPress).TotalMilliseconds < HextechConfig.BlinkDoubleClickInterval)
+                    {
+                        _lastUseKeyPressTime[player.SteamID] = DateTime.MinValue;
+                        if (HasHextech(player, "Blink")) TriggerBlink(player);
+                        if (HasHextech(player, "Chronobreak")) TriggerChronobreak(player);
+                    }
+                    else _lastUseKeyPressTime[player.SteamID] = now;
+                }
+                
+                // F Key (LookAtWeapon)
+                if ((currentButtons & PlayerButtons.LookAtWeapon) != 0 && (previousButtons & PlayerButtons.LookAtWeapon) == 0)
+                {
+                    var now = DateTime.Now;
+                    _lastLookKeyPressTime.TryGetValue(player.SteamID, out var lastPress);
+                    if ((now - lastPress).TotalMilliseconds < HextechConfig.BlinkDoubleClickInterval)
+                    {
+                        _lastLookKeyPressTime[player.SteamID] = DateTime.MinValue;
+                        if (HasHextech(player, "SoulOut")) TriggerSoulOut(player);
+                    }
+                    else _lastLookKeyPressTime[player.SteamID] = now;
                 }
 
                 _lastButtons[player.SteamID] = currentButtons;
             }
         }
 
-        /// <summary>
-        /// 按下 Use 键（E）时的双击逻辑判定
-        /// </summary>
-        private void OnUseKeyDown(CCSPlayerController player)
-        {
-            bool hasBlink = HasHextech(player, "Blink");
-            bool hasChronobreak = HasHextech(player, "Chronobreak");
-
-            if (!hasBlink && !hasChronobreak) return;
-            if (!player.PawnIsAlive) return;
-
-            var now = DateTime.Now;
-            _lastUseKeyPressTime.TryGetValue(player.SteamID, out var lastPress);
-
-            double elapsed = (now - lastPress).TotalMilliseconds;
-
-            if (elapsed < HextechConfig.BlinkDoubleClickInterval) // 300 ms 判定为双击
-            {
-                // 重置时间防连按
-                _lastUseKeyPressTime[player.SteamID] = DateTime.MinValue;
-
-                if (hasBlink)
-                {
-                    TriggerBlink(player);
-                }
-                if (hasChronobreak)
-                {
-                    TriggerChronobreak(player);
-                }
-            }
-            else
-            {
-                _lastUseKeyPressTime[player.SteamID] = now;
-            }
-        }
-
-        /// <summary>
-        /// 武器大师武器剥离与发放逻辑
-        /// </summary>
         private void StripPlayerWeaponsExceptKnife(CCSPlayerController player)
         {
             var pawn = player.PlayerPawn.Value;
             if (pawn == null || pawn.WeaponServices == null) return;
-
             var weapons = new List<CHandle<CBasePlayerWeapon>>(pawn.WeaponServices.MyWeapons);
             foreach (var weapon in weapons)
             {
-                if (weapon == null || !weapon.IsValid || weapon.Value == null || !weapon.Value.IsValid)
-                    continue;
-
+                if (weapon == null || !weapon.IsValid || weapon.Value == null || !weapon.Value.IsValid) continue;
                 string name = weapon.Value.DesignerName ?? "";
-                if (name.Contains("knife") || name.Contains("bayonet") || name.Contains("melee") || name.Contains("taser"))
-                    continue;
-
+                if (name.Contains("knife") || name.Contains("bayonet") || name.Contains("melee") || name.Contains("taser")) continue;
                 pawn.RemovePlayerItem(weapon.Value);
                 weapon.Value.Remove();
             }
@@ -967,18 +1057,10 @@ namespace CS2HextechPlugin
         private void ApplyWeaponMaster(CCSPlayerController player)
         {
             StripPlayerWeaponsExceptKnife(player);
-
-            var rand = new Random();
-            string primary = HextechConfig.WeaponMasterPrimaryPool[rand.Next(HextechConfig.WeaponMasterPrimaryPool.Length)];
-            string secondary = HextechConfig.WeaponMasterSecondaryPool[rand.Next(HextechConfig.WeaponMasterSecondaryPool.Length)];
-
+            string primary = HextechConfig.WeaponMasterPrimaryPool[_random.Next(HextechConfig.WeaponMasterPrimaryPool.Length)];
+            string secondary = HextechConfig.WeaponMasterSecondaryPool[_random.Next(HextechConfig.WeaponMasterSecondaryPool.Length)];
             player.GiveNamedItem(primary);
             player.GiveNamedItem(secondary);
-
-            // 打印消息
-            string primDisplay = primary.Replace("weapon_", "");
-            string secDisplay = secondary.Replace("weapon_", "");
-            player.PrintToChat($" \x06[武器大师]\x01 本局免费随机赠送主副武器（\x04{primDisplay}\x01 + \x04{secDisplay}\x01）与全套防弹衣！");
         }
 
         private void ShowHextechMenu(CCSPlayerController player)
@@ -987,27 +1069,45 @@ namespace CS2HextechPlugin
 
             var allOptions = new List<HextechOption>
             {
-                new HextechOption("Titan", "❤️ 泰坦之躯 (全额 200HP)", (p) => ApplyHextechEffect(p, "Titan")),
-                new HextechOption("Vampire", "🩸 吸血狂热 (造成伤害回血 30%)", (p) => ApplyHextechEffect(p, "Vampire")),
-                new HextechOption("Speed", "⚡ 风行者 (速度提升 1.3 倍)", (p) => ApplyHextechEffect(p, "Speed")),
-                new HextechOption("Bounty", "💎 赏金猎人 (击杀+$2000 & 刷新电击枪)", (p) => ApplyHextechEffect(p, "Bounty")),
-                new HextechOption("Blink", "🌀 闪现星使 (双击 E 键闪现，每回合2次)", (p) => ApplyHextechEffect(p, "Blink")),
-                new HextechOption("GlassCannon", "💥 玻璃大炮 (伤害+50% & 血量上限60)", (p) => ApplyHextechEffect(p, "GlassCannon")),
-                new HextechOption("Thorns", "🛡️ 棘刺甲壳 (反弹 30% 受到伤害)", (p) => ApplyHextechEffect(p, "Thorns")),
-                new HextechOption("Execute", "🎯 死神斩杀 (斩杀低于 35HP 敌人)", (p) => ApplyHextechEffect(p, "Execute")),
-                new HextechOption("KillRush", "🏃 狂暴杀戮 (击杀后 5秒 提升50%移速)", (p) => ApplyHextechEffect(p, "KillRush")),
-                new HextechOption("Chronobreak", "⏳ 时空回溯 (双击 E 键回溯 3秒前状态)", (p) => ApplyHextechEffect(p, "Chronobreak")),
-                new HextechOption("HeavyInfantry", "🎖️ 重装坦克 (自带全套防弹衣 & 减伤15%)", (p) => ApplyHextechEffect(p, "HeavyInfantry")),
-                new HextechOption("WeaponMaster", "🎲 武器大师 (每局随机主副武器 & 全套防弹衣)", (p) => ApplyHextechEffect(p, "WeaponMaster")),
-                new HextechOption("LastStand", "💣 自爆卡车 (死亡拉线爆炸伤害周围敌人)", (p) => ApplyHextechEffect(p, "LastStand")),
-                new HextechOption("Reckoner", "🔥 狂徒 (无伤 10 秒后每秒回复 2 HP)", (p) => ApplyHextechEffect(p, "Reckoner"))
+                // Silver (9)
+                new HextechOption("Speed", "⚡ 风行者 <font size='12'>(速度提升 1.3 倍)</font>", (p) => ApplyHextechEffect(p, "Speed")),
+                new HextechOption("Bounty", "💎 赏金猎人 <font size='12'>(击杀+$2000 & 刷新电击枪)</font>", (p) => ApplyHextechEffect(p, "Bounty")),
+                new HextechOption("Thorns", "🛡️ 棘刺甲壳 <font size='12'>(反弹 30% 受到伤害)</font>", (p) => ApplyHextechEffect(p, "Thorns")),
+                new HextechOption("Reckoner", "🔥 狂徒 <font size='12'>(无伤 10 秒后每秒回复 2 HP)</font>", (p) => ApplyHextechEffect(p, "Reckoner")),
+                new HextechOption("Bleed", "🔥 流血 <font size='12'>(攻击造成 5秒流血)</font>", (p) => ApplyHextechEffect(p, "Bleed")),
+                new HextechOption("FlashMagic", "🪄 精怪魔法 <font size='12'>(致盲敌人3秒内不能开火)</font>", (p) => ApplyHextechEffect(p, "FlashMagic")),
+                new HextechOption("GrenadeMaster", "💣 道具大师 <font size='12'>(投掷物伤害+50%并可用2颗)</font>", (p) => ApplyHextechEffect(p, "GrenadeMaster")),
+                new HextechOption("LastStand", "💣 自爆卡车 <font size='12'>(死亡爆炸伤害周围敌人)</font>", (p) => ApplyHextechEffect(p, "LastStand")),
+                new HextechOption("GoldenChange", "✨ 质变黄金 <font size='12'>(随机获得金色海克斯)</font>", (p) => ApplyHextechEffect(p, "GoldenChange")),
+
+                // Gold (11)
+                new HextechOption("Titan", "❤️ 泰坦之躯 <font size='12'>(全额 200HP)</font>", (p) => ApplyHextechEffect(p, "Titan")),
+                new HextechOption("Vampire", "🩸 吸血狂热 <font size='12'>(造成伤害回血 30%)</font>", (p) => ApplyHextechEffect(p, "Vampire")),
+                new HextechOption("Blink", "🌀 闪现星使 <font size='12'>(双击 E 键闪现，每回合2次)</font>", (p) => ApplyHextechEffect(p, "Blink")),
+                new HextechOption("KillRush", "🏃 狂暴杀戮 <font size='12'>(击杀后 3秒 提升移速)</font>", (p) => ApplyHextechEffect(p, "KillRush")),
+                new HextechOption("HeavyInfantry", "🎖️ 重装坦克 <font size='12'>(自带全套防弹衣 & 减伤15%)</font>", (p) => ApplyHextechEffect(p, "HeavyInfantry")),
+                new HextechOption("WeaponMaster", "🎲 武器大师 <font size='12'>(每局随机主副武器 & 全套防弹衣)</font>", (p) => ApplyHextechEffect(p, "WeaponMaster")),
+                new HextechOption("Backstab", "🗡️ 小丑背刺 <font size='12'>(背后攻击 3 倍伤害)</font>", (p) => ApplyHextechEffect(p, "Backstab")),
+                new HextechOption("Execute", "🎯 死神斩杀 <font size='12'>(斩杀低于 35HP 敌人)</font>", (p) => ApplyHextechEffect(p, "Execute")),
+                new HextechOption("IndomitableWill", "🛡️ 坚韧不拔 <font size='12'>(血量越低回血越快)</font>", (p) => ApplyHextechEffect(p, "IndomitableWill")),
+                new HextechOption("HeadshotMaster", "🎯 爆头大师 <font size='12'>(爆头100%吸血)</font>", (p) => ApplyHextechEffect(p, "HeadshotMaster")),
+                new HextechOption("PrismaticChange", "✨ 质变棱彩 <font size='12'>(随机获得彩色海克斯)</font>", (p) => ApplyHextechEffect(p, "PrismaticChange")),
+
+                // Prismatic (8)
+                new HextechOption("SoulOut", "👻 灵魂出窍 <font size='12'>(双击F灵魂分离 8秒)</font>", (p) => ApplyHextechEffect(p, "SoulOut")),
+                new HextechOption("GlassCannon", "💥 玻璃大炮 <font size='12'>(伤害+50% & 血量上限60)</font>", (p) => ApplyHextechEffect(p, "GlassCannon")),
+                new HextechOption("Chronobreak", "⏳ 时空回溯 <font size='12'>(双击 E 键回溯 3秒前状态)</font>", (p) => ApplyHextechEffect(p, "Chronobreak")),
+                new HextechOption("KillerMaster", "👑 我是高手 <font size='12'>(击杀加伤害与减伤)</font>", (p) => ApplyHextechEffect(p, "KillerMaster")),
+                new HextechOption("TinySlayer", "🛸 巨人杀手 <font size='12'>(体型变小，移速伤害提升)</font>", (p) => ApplyHextechEffect(p, "TinySlayer")),
+                new HextechOption("NoPrimary", "🚫 回归基本功 <font size='12'>(禁主武器，加伤害吸血移速)</font>", (p) => ApplyHextechEffect(p, "NoPrimary")),
+                new HextechOption("Goliath", "🌋 歌利亚巨人 <font size='12'>(体型变大，血量伤害提升)</font>", (p) => ApplyHextechEffect(p, "Goliath")),
+                new HextechOption("UnluckyContract", "☠️ 不详契约 <font size='12'>(血越少伤害移速越高，开火自伤)</font>", (p) => ApplyHextechEffect(p, "UnluckyContract"))
             };
 
-            var random = new Random();
             var selectedOptions = new List<HextechOption>();
             while (selectedOptions.Count < 3 && allOptions.Count > 0)
             {
-                int index = random.Next(allOptions.Count);
+                int index = _random.Next(allOptions.Count);
                 selectedOptions.Add(allOptions[index]);
                 allOptions.RemoveAt(index);
             }
@@ -1015,12 +1115,8 @@ namespace CS2HextechPlugin
             var hexMenu = new CenterHtmlMenu("<font color='#a4e6ff'><b>🧬 战术实验室：请选择本局海克斯效果</b></font>", this);
             foreach (var opt in selectedOptions)
             {
-                hexMenu.AddMenuOption(opt.DisplayName, (playerController, option) =>
-                {
-                    opt.ApplyAction(playerController);
-                });
+                hexMenu.AddMenuOption(opt.DisplayName, (playerController, option) => { opt.ApplyAction(playerController); });
             }
-
             MenuManager.OpenCenterHtmlMenu(this, player, hexMenu);
         }
 
@@ -1028,70 +1124,27 @@ namespace CS2HextechPlugin
         {
             if (player == null || !player.IsValid) return;
 
-            // 存储与选择记录
-            if (!_playerHextechs.ContainsKey(player.SteamID))
+            // Handle Changes Randomly
+            if (hexType == "GoldenChange")
             {
-                _playerHextechs[player.SteamID] = new HashSet<string>();
+                string[] goldens = { "Titan", "Vampire", "Blink", "KillRush", "HeavyInfantry", "WeaponMaster", "Backstab", "Execute", "IndomitableWill", "HeadshotMaster" };
+                hexType = goldens[_random.Next(goldens.Length)];
+                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变黄金！获得了金色海克斯：\x04{hexType}\x01！");
+            }
+            else if (hexType == "PrismaticChange")
+            {
+                string[] prismatics = { "SoulOut", "GlassCannon", "Chronobreak", "KillerMaster", "TinySlayer", "NoPrimary", "Goliath", "UnluckyContract" };
+                hexType = prismatics[_random.Next(prismatics.Length)];
+                player.PrintToChat($" \x06[海克斯]\x01 你已激活 质变棱彩！获得了彩色海克斯：\x04{hexType}\x01！");
             }
 
-            if (HextechConfig.CoreMode == 1)
-            {
-                _playerHextechs[player.SteamID].Clear();
-            }
+            if (!_playerHextechs.ContainsKey(player.SteamID)) _playerHextechs[player.SteamID] = new HashSet<string>();
+            if (HextechConfig.CoreMode == 1) _playerHextechs[player.SteamID].Clear();
             _playerHextechs[player.SteamID].Add(hexType);
             _playerLastChoiceRound[player.SteamID] = GetCurrentRound();
 
-            // 重新计算并应用全部被动属性
             ReapplyActiveHextechs(player);
-
-            // 输出所选海克斯提示语
-            switch (hexType)
-            {
-                case "Titan":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功注入 \x07泰坦之躯\x01，血量已跃升至 \x04200 HP\x01！");
-                    break;
-                case "Vampire":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功掌握 \x02吸血狂热\x01，本局你造成的 30% 物理伤害将转化为回血！");
-                    break;
-                case "Speed":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功披上 \x05风行者之翼\x01，移动速度提升 \x0430%\x01！");
-                    break;
-                case "Bounty":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功雇佣 \x04赏金猎人\x01，每完成一次击杀将获得 \x04$2000\x01 现金并刷新 \x05电击枪\x01！");
-                    break;
-                case "Blink":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功注入 \x05闪现星使\x01，在游戏中 \x04双击 E 键\x01 即可向前闪现！");
-                    break;
-                case "GlassCannon":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功注入 \x03玻璃大炮\x01，伤害提升 \x0450%\x01，但生命上限降至 \x0260 HP\x01！");
-                    break;
-                case "Thorns":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功披上 \x05棘刺甲壳\x01，受到的 \x0430%\x01 伤害将直接反击给对手！");
-                    break;
-                case "Execute":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功契约 \x07死神斩杀\x01，将无情斩杀任何低于 \x0235 HP\x01 的敌人！");
-                    break;
-                case "KillRush":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功激活 \x05狂暴杀戮\x01，完成击杀后将获得 5 秒 50% 极限移速加成！");
-                    break;
-                case "Chronobreak":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功链接 \x05时空回溯\x01，游戏中 \x04双击 E 键\x01 即可折跃回 3 秒前的位置与血量！");
-                    break;
-                case "HeavyInfantry":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已成功武装 \x05重装坦克\x01，获得免费防弹衣与头盔，且常驻减伤 \x0415%\x01！");
-                    break;
-                case "WeaponMaster":
-                    // 已经在 Reapply 中执行了 ApplyWeaponMaster
-                    break;
-                case "LastStand":
-                    player.PrintToChat(" \x06[海克斯]\x01 你已装载 \x07自爆卡车\x01，在死亡的瞬间将拉线自爆，让周围敌人陪葬！");
-                    break;
-                case "Reckoner":
-                    _playerLastHurtTime[player.SteamID] = DateTime.Now;
-                    player.PrintToChat(" \x06[海克斯]\x01 你已激活 \x07狂徒\x01，\x04连续 10 秒无伤\x01 后将开始 \x04每秒回复 2 HP\x01（上限为最大血量的 \x0480%\x01）！");
-                    break;
-            }
-
+            player.PrintToChat($" \x06[海克斯]\x01 你已成功选择海克斯：\x04{hexType}\x01！");
             MenuManager.CloseActiveMenu(player);
         }
     }
@@ -1101,12 +1154,9 @@ namespace CS2HextechPlugin
         public string Id { get; set; }
         public string DisplayName { get; set; }
         public Action<CCSPlayerController> ApplyAction { get; set; }
-
         public HextechOption(string id, string displayName, Action<CCSPlayerController> applyAction)
         {
-            Id = id;
-            DisplayName = displayName;
-            ApplyAction = applyAction;
+            Id = id; DisplayName = displayName; ApplyAction = applyAction;
         }
     }
 }
