@@ -9,7 +9,7 @@ import {
   isImposter, imposterResult, imposterVotesTotal,
   assignImposters, startImposterVote, submitImposterVote, endImposterVote,
   gameMode, imposterCount, hasImposterVoted, selectedImposterTargets,
-  imposterVotes
+  imposterVotes, selectedMap, startGameHextech, hextechServer
 } from '../composables/useGame'
 import { socket } from '../composables/socket'
 
@@ -112,6 +112,12 @@ async function handleAdminLogin() {
     alert(t('home.passwordError'))
   }
 }
+
+function manualConnectHextech() {
+  if (hextechServer.value) {
+    window.location.href = `steam://connect/${hextechServer.value.ip}:${hextechServer.value.port}`
+  }
+}
 </script>
 
 <template>
@@ -150,6 +156,9 @@ async function handleAdminLogin() {
           :class="isCenterMode() ? 'text-3xl md:text-5xl tracking-tight' : 'text-5xl md:text-7xl tracking-[0.1em]'">
           {{ isSpinning() ? $t('roulette.title') : isVoting() ? $t('voting.title') : isImposterVoting() ? $t('lobby.imposterHunt') : $t('lobby.title') }}
         </h1>
+        <div v-if="gameMode === 'HEXTECH' && !isCenterMode()" class="mt-4 font-mono text-xl text-primary tracking-widest uppercase">
+          海克斯模式 - {{ selectedMap }}
+        </div>
         <div v-if="(isImposterAssigned() || isImposterVoting()) && isMeSeated" class="mt-4 px-6 py-2 border-2 rounded-full inline-block"
           :class="isImposter ? 'bg-red-600/30 border-red-500 animate-pulse' : 'bg-green-600/30 border-green-500'">
           <span v-if="isImposter" class="font-bold text-red-100 uppercase tracking-widest text-lg shadow-black drop-shadow-md">{{ $t('lobby.isImposter') }}</span>
@@ -509,10 +518,26 @@ async function handleAdminLogin() {
             @click="assignImposters">
             😈 {{ $t('lobby.startGameImposter') }}
           </button>
+          <button v-if="gameMode === 'HEXTECH'"
+            class="w-full btn-base bg-blue-600 text-white chamfer-clip py-5 text-xl uppercase font-black shadow-[0_0_40px_rgba(0,100,255,0.2)]"
+            @click="startGameHextech">
+            🚀 开始游戏
+          </button>
         </template>
-        <div v-else
-          class="p-5 bg-white/5 border border-white/10 chamfer-clip font-mono text-xs text-primary uppercase tracking-[0.2em]">
-          {{ $t('lobby.standby') }}</div>
+        <template v-else>
+          <div v-if="gameMode === 'HEXTECH' && hextechServer" class="w-full">
+            <button class="w-full btn-base bg-green-600 text-white chamfer-clip py-5 text-xl uppercase font-black shadow-[0_0_40px_rgba(0,255,0,0.2)]"
+              @click="manualConnectHextech">
+              🔗 手动连接
+            </button>
+          </div>
+          <div v-else-if="gameMode === 'HEXTECH'"
+            class="p-5 bg-white/5 border border-white/10 chamfer-clip font-mono text-xs text-primary uppercase tracking-[0.2em]">
+            等待房主开始...</div>
+          <div v-else
+            class="p-5 bg-white/5 border border-white/10 chamfer-clip font-mono text-xs text-primary uppercase tracking-[0.2em]">
+            {{ $t('lobby.standby') }}</div>
+        </template>
       </div>
     </main>
 

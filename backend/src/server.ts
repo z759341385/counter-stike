@@ -42,10 +42,10 @@ io.on('connection', (socket) => {
     }
   }
 
-  socket.on('create_room', ({ playerName, gameMode, imposterCount }, callback) => {
+  socket.on('create_room', ({ playerName, gameMode, imposterCount, mapName }, callback) => {
     const count = typeof imposterCount === 'number' ? imposterCount : 1;
-    const mode = gameMode === 'IMPOSTER' ? 'IMPOSTER' : 'ROULETTE';
-    const { roomId, token } = rooms.createRoom(socket.id, playerName, mode, count);
+    const mode = gameMode === 'HEXTECH' ? 'HEXTECH' : (gameMode === 'IMPOSTER' ? 'IMPOSTER' : 'ROULETTE');
+    const { roomId, token } = rooms.createRoom(socket.id, playerName, mode, count, mapName || 'de_dust2');
     socket.join(roomId);
     if (typeof callback === 'function') callback({ success: true, roomId, token });
     io.to(roomId).emit('room_update', rooms.getRoomData(roomId));
@@ -118,6 +118,25 @@ io.on('connection', (socket) => {
       const room = rooms.getRoom(roomId);
       if (room) room.lastSpinResult = result;
       io.to(roomId).emit('spin_wheel', result);
+    }
+  });
+
+  // 海克斯模式相关事件
+  socket.on('start_hextech_game', ({ roomId }, callback) => {
+    const room = rooms.getRoom(roomId);
+    if (room) {
+      const host = [...room.players, ...room.spectators].find(p => p && p.socketId === socket.id && p.isHost);
+      if (host) {
+        // 模拟分配服务器逻辑 (Mock IP & Port)
+        const serverInfo = { ip: '127.0.0.1', port: 27015 };
+        if (typeof callback === 'function') callback({ success: true, server: serverInfo });
+        io.to(roomId).emit('hextech_server_ready', serverInfo);
+        logger.info('Room', `房间 ${roomId} 海克斯模式开始, 分配服务器: ${serverInfo.ip}:${serverInfo.port}`);
+      } else {
+        if (typeof callback === 'function') callback({ success: false, error: '仅房主可开始游戏' });
+      }
+    } else {
+      if (typeof callback === 'function') callback({ success: false, error: '房间不存在' });
     }
   });
 

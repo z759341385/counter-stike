@@ -17,6 +17,8 @@ export const adminPassword = ref('')
 export const allRules = ref([])
 export const gameMode = ref('ROULETTE')
 export const imposterCount = ref(1)
+export const selectedMap = ref('de_dust2')
+export const hextechServer = ref(null)
 
 export const isImposter = ref(false)
 export const imposterResult = ref(null)
@@ -48,9 +50,9 @@ export function initGame() {
   if (token) connectSocket();
 }
 
-export function createRoom(name, mode = 'ROULETTE', count = 1) {
+export function createRoom(name, mode = 'ROULETTE', count = 1, mapName = 'de_dust2') {
   connectSocket();
-  socket.emit('create_room', { playerName: name, gameMode: mode, imposterCount: count }, (res) => {
+  socket.emit('create_room', { playerName: name, gameMode: mode, imposterCount: count, mapName }, (res) => {
     if (res.success) {
       roomId.value = res.roomId;
       localStorage.setItem('cs_rule_token', res.token);
@@ -148,6 +150,16 @@ export function endImposterVote() {
   socket.emit('end_imposter_vote', { roomId: roomId.value });
 }
 
+// ── 海克斯模式方法 ──
+export function startGameHextech() {
+  socket.emit('start_hextech_game', { roomId: roomId.value }, (res) => {
+    if (!res.success) {
+      errorMsg.value = res.error;
+      setTimeout(() => { errorMsg.value = ''; }, 3000);
+    }
+  });
+}
+
 // ── 管理员方法 ──
 
 export function adminLogin(password) {
@@ -226,6 +238,7 @@ function updateRoomState(room) {
   roomStatus.value = room.status || 'WAITING';
   gameMode.value = room.gameMode || 'ROULETTE';
   imposterCount.value = room.imposterCount || 1;
+  selectedMap.value = room.mapName || 'de_dust2';
 
   // 恢复已投票状态
   const myToken = localStorage.getItem('cs_rule_token');
@@ -322,4 +335,12 @@ socket.on('imposter_vote_progress', (data) => {
 
 socket.on('imposter_result', (data) => {
   imposterResult.value = data;
+});
+
+socket.on('hextech_server_ready', (data) => {
+  if (data && data.ip && data.port) {
+    hextechServer.value = data;
+    // 收到自动触发跳转
+    window.location.href = `steam://connect/${data.ip}:${data.port}`;
+  }
 });

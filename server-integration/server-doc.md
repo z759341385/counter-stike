@@ -262,3 +262,54 @@ dotnet build -c Release
        ├─► [广播视觉弹窗]：所有在线玩家的屏幕中央同时弹出 5 秒 HTML 炫酷提示
        │
        └─► [自动执行规则]：插件修改服务端参数（如 `sv_gravity 400`），或者调整玩家血量
+
+---
+
+## 第七步：进阶配置 - 切换官方服役地图与创意工坊地图
+
+在使用服务器联调或者游玩时，我们经常需要更换地图。
+
+### A. 切换官方服役地图 (Active Duty Maps)
+如果你想玩官方自带的常规地图（如炼狱小镇、荒漠迷城等），非常简单，不需要任何下载配置。
+1. **在启动脚本中设置初始地图**：在 `start_server.bat` 中，修改 `+map` 参数。例如 `+map de_mirage`（荒漠迷城）或 `+map de_inferno`（炼狱小镇）。
+2. **游戏中途动态切换**：在服务器黑窗口、Node.js RCON 脚本或游戏内的控制台中，直接输入 `map 地图代码` 即可瞬间切换。
+   **常见官方地图代码表**：
+   - 炙热沙城2：`de_dust2`
+   - 荒漠迷城：`de_mirage`
+   - 炼狱小镇：`de_inferno`
+   - 核子危机：`de_nuke`
+   - 死亡游乐园：`de_overpass`
+   - 眩晕大厦：`de_vertigo`
+   - 远古遗迹：`de_ancient`
+   - 阿努比斯：`de_anubis`
+
+### B. 游玩创意工坊地图 (Workshop Maps)
+想玩社区制作的练枪图或趣味地图，则需要以下配置：
+
+### 1. 查找地图的 Workshop ID
+1. 在 Steam 社区的 CS2 创意工坊中找到你想玩的地图（确保该地图的可见性是**公开**的）。
+2. 在浏览器或者客户端复制网页链接，找到链接末尾的 `?id=xxx`，这串数字就是 Workshop ID（例如：`3070290869`）。
+
+### 2. 获取 Steam 游戏服务器登录令牌 (GSLT)
+为了让服务器能够正常连接 Steam 下载创意工坊内容，强烈建议配置 GSLT：
+1. 访问 [Steam 游戏服务器帐户管理](https://steamcommunity.com/dev/managegameservers)（需登录 Steam）。
+2. 在底部的“创建新的游戏服务器帐户”中，**App ID 填入 730** (CS2 的游戏编号)，备忘录随便填（如“我的测试服”），点击创建。
+3. 复制生成的 **登录令牌 (Login Token)**。
+
+### 3. 修改启动脚本并加载地图
+在你的 `start_server.bat` 中，添加 GSLT 令牌参数，并指定要加载的创意工坊地图：
+- **修改启动脚本**：
+  在原本的启动参数后追加 `+sv_setsteamaccount "你的令牌" +host_workshop_map 3070290869`。
+  *示例*：
+  ```bat
+  cs2.exe -dedicated -usercon +game_type 0 +game_mode 1 +sv_setsteamaccount "你的令牌" +host_workshop_map 3070290869 +rcon_password "123456" -insecure
+  ```
+  *(注意：删除了原本的 `+map de_dust2`，改为用 `+host_workshop_map` 来加载默认地图)*
+
+### 4. 游戏中途切换创意工坊地图
+如果服务器正在运行，你也可以随时动态切换地图：
+- 在 Node.js RCON 脚本中，或者在游戏开发者控制台 (`~`) 中，输入命令：
+  ```text
+  host_workshop_map 3070290869
+  ```
+- *服务器会开始在后台自动下载地图文件，下载完成后会自动切换地图并重新加载对局！*

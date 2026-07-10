@@ -15,7 +15,7 @@ export interface VoteOption {
 /** 房间状态 */
 export type RoomStatus = 'WAITING' | 'VOTING' | 'SPINNING' | 'RESULT' | 'IMPOSTER_ASSIGNED' | 'IMPOSTER_VOTING' | 'IMPOSTER_RESULT';
 /** 游戏模式 */
-export type GameMode = 'ROULETTE' | 'IMPOSTER';
+export type GameMode = 'ROULETTE' | 'IMPOSTER' | 'HEXTECH';
 /** 房间完整状态 */
 export interface RoomState {
     roomId: string;
@@ -30,9 +30,10 @@ export interface RoomState {
     imposterCount: number;
     imposters: string[];
     imposterVotes: Map<string, string[]>;
+    mapName?: string;
 }
 /** 创建房间 */
-export declare function createRoom(hostSocketId: string, hostName: string, gameMode?: GameMode, imposterCount?: number): {
+export declare function createRoom(hostSocketId: string, hostName: string, gameMode?: GameMode, imposterCount?: number, mapName?: string): {
     roomId: string;
     token: string;
 };
@@ -73,6 +74,7 @@ export declare function getRoomData(roomId: string): {
     lastSpinResult?: any;
     usedRuleIds: number[];
     imposterCount: number;
+    mapName?: string;
 } | null;
 export declare function getPlayerList(roomId: string): (Player | null)[];
 export declare function getSpectators(roomId: string): Player[];

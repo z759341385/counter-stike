@@ -4,7 +4,7 @@
  */
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { createRoom, joinRoom, errorMsg, adminLogin } from '../composables/useGame'
+import { createRoom, joinRoom, errorMsg, adminLogin, selectedMap } from '../composables/useGame'
 
 const { t } = useI18n()
 
@@ -84,7 +84,7 @@ onUnmounted(() => {
 function handleCreate() {
   if (!nameInput.value.trim()) return
   localStorage.setItem('cs_player_name', nameInput.value.trim())
-  createRoom(nameInput.value.trim(), gameMode.value, Number(imposterCount.value))
+  createRoom(nameInput.value.trim(), gameMode.value, Number(imposterCount.value), selectedMap.value)
   showCreateModal.value = false
 }
 
@@ -199,7 +199,23 @@ async function handleAdminLogin() {
               <input type="radio" v-model="gameMode" value="IMPOSTER" class="accent-primary" />
               {{ $t('home.modeImposter') }}
             </label>
+            <label class="flex items-center gap-2 text-white cursor-pointer">
+              <input type="radio" v-model="gameMode" value="HEXTECH" class="accent-primary" />
+              海克斯模式
+            </label>
           </div>
+        </div>
+        <div v-if="gameMode === 'HEXTECH'" class="mb-6">
+          <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">选择地图</label>
+          <select v-model="selectedMap" class="input-field chamfer-clip-sm bg-surface-container text-white">
+            <option value="de_mirage">de_mirage (荒漠迷城)</option>
+            <option value="de_dust2">de_dust2 (炙热沙城2)</option>
+            <option value="de_inferno">de_inferno (炼狱小镇)</option>
+            <option value="de_nuke">de_nuke (核子危机)</option>
+            <option value="de_vertigo">de_vertigo (殒命大厦)</option>
+            <option value="de_ancient">de_ancient (远古遗迹)</option>
+            <option value="de_anubis">de_anubis (阿努比斯)</option>
+          </select>
         </div>
         <div v-if="gameMode === 'IMPOSTER'" class="mb-6">
           <label class="block font-mono text-[10px] text-outline uppercase tracking-widest mb-2">{{

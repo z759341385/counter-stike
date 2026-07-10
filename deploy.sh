@@ -139,8 +139,8 @@ if not success:
       else
         echo "⚠️  服务重启失败，正在尝试通过强制结束进程并后台重新启动..."
         
-        # 1. 查找当前运行的后端 Node 进程 PID
-        PID=$(ps aux | grep "counter-strike/backend/dist/server.js" | grep -v "grep" | awk '{print $2}')
+        # 1. 查找当前运行的后端 Node 进程 PID (通过端口或进程名)
+        PID=$(lsof -t -i:3001 2>/dev/null || ps aux | grep "dist/server.js" | grep -v "grep" | awk '{print $2}' | head -n 1)
         
         if [ -n "$PID" ]; then
           echo "🎯 找到旧的进程 PID: $PID，正在强制结束..."

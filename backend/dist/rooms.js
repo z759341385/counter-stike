@@ -27,7 +27,7 @@ function generateToken() {
     return Math.random().toString(36).substring(2, 15);
 }
 /** 创建房间 */
-function createRoom(hostSocketId, hostName, gameMode = 'ROULETTE', imposterCount = 1) {
+function createRoom(hostSocketId, hostName, gameMode = 'ROULETTE', imposterCount = 1, mapName = 'de_dust2') {
     const roomId = generateRoomId();
     const token = generateToken();
     const room = {
@@ -42,6 +42,7 @@ function createRoom(hostSocketId, hostName, gameMode = 'ROULETTE', imposterCount
         imposterCount,
         imposters: [],
         imposterVotes: new Map(),
+        mapName,
     };
     room.players[0] = { socketId: hostSocketId, token, playerName: hostName, isHost: true, connected: true };
     rooms.set(roomId, room);
